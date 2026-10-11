@@ -2,8 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026학년도 장아초 주간업무 & 월중행사 자동 취합 시스템</title>
-    <!-- Tailwind CSS CDN -->
+     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,7 +34,7 @@
         @media print {
             .no-print { display: none !important; }
             .print-only { display: block !important; }
-            body { background: white; font-size: 11pt; }
+            body { background: white; font-size: 11pt; height: auto !important; overflow: visible !important; }
             .print-break { page-break-before: always; }
             .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
             .border { border-color: #cbd5e1 !important; }
@@ -44,334 +43,356 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        html, body {
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            width: 100%;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 antialiased">
+<body class="bg-slate-50 antialiased">
 
-    <!-- Top Navigation Header -->
-    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40 no-print">
-        <div class="w-full px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo / Title -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-bold text-xl shadow-inner">
-                        <i class="fa-solid font-bold fa-school"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-extrabold text-lg sm:text-xl tracking-tight text-white">
-                            장아초등학교
-                        </h1>
-                    </div>
-                </div>
+    <div class="app-container">
 
-                <!-- Navigation Tabs -->
-                <nav class="flex space-x-1 sm:space-x-2">
-                    <button id="tab-btn-weekly" onclick="switchTab('weekly')" class="tab-btn active px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition flex items-center gap-2 bg-emerald-600 text-white shadow">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                        <span>주간업무 입력</span>
-                    </button>
-                    <button id="tab-btn-monthly" onclick="switchTab('monthly')" class="tab-btn px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-days"></i>
-                        <span>월중행사 취합</span>
-                    </button>
-                    <button id="tab-btn-matrix" onclick="switchTab('matrix')" class="tab-btn px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-2">
-                        <i class="fa-solid fa-table-cells"></i>
-                        <span>학년/부서 일람</span>
-                    </button>
-                </nav>
-            </div>
-        </div>
-    </header>
-
-    <!-- Top Stats Banner -->
-    <div class="bg-emerald-900 text-emerald-100 py-2 px-4 sm:px-6 lg:px-8 shadow-inner text-xs sm:text-sm no-print border-b border-emerald-800">
-        <div class="w-full flex flex-wrap justify-between items-center gap-2">
-            <div class="flex items-center gap-4">
-                <span class="flex items-center gap-1.5 font-medium">
-                    <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                    총 등록 행사/업무: <strong id="stat-total-count" class="text-white font-bold ml-1">0</strong>건
-                </span>
-                <span class="hidden md:inline-block text-emerald-700">|</span>
-                <span class="hidden md:flex items-center gap-1.5 font-medium">
-                    <i class="fa-solid fa-calendar-day text-emerald-400"></i>
-                    이번 달 주요 학사일정: <strong id="stat-month-count" class="text-white font-bold ml-1">0</strong>건
-                </span>
-            </div>
-            <div class="flex items-center gap-2">
-                <button onclick="openModal('add-event')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1 rounded-md text-xs shadow transition flex items-center gap-1">
-                    <i class="fa-solid fa-plus"></i> 빠른 업무/행사 등록
-                </button>
-                <button onclick="exportToCSV()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-md text-xs border border-slate-700 transition flex items-center gap-1">
-                    <i class="fa-solid fa-file-excel text-emerald-400"></i> CSV 내보내기
-                </button>
-                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-md text-xs border border-slate-700 transition flex items-center gap-1">
-                    <i class="fa-solid fa-print"></i> 인쇄
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Container -->
-    <main class="flex-grow w-full px-3 sm:px-6 lg:px-8 py-6">
-
-        <!-- TAB 1: 주간업무 입력 및 상세 조회 -->
-        <section id="tab-weekly" class="tab-content block space-y-6">
-            
-            <div class="w-full space-y-6">
-                <!-- Weekly Detailed Schedule Header & Controls -->
-                <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-4">
-                        <div class="flex flex-wrap items-center gap-3">
-                            <div class="flex items-center space-x-2">
-                                <button onclick="changeWeek(-1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
-                                    <i class="fa-solid fa-chevron-left text-xs"></i>
-                                </button>
-                                <div class="text-left">
-                                    <h3 id="weekly-range-display" class="font-extrabold text-slate-800 text-lg sm:text-xl flex items-center gap-2">
-                                        2026년 3월 1주차
-                                    </h3>
-                                    <p id="weekly-date-span" class="text-xs text-slate-500 font-medium">2026.03.02(월) ~ 2026.03.06(금)</p>
-                                </div>
-                                <button onclick="changeWeek(1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
-                                    <i class="fa-solid fa-chevron-right text-xs"></i>
-                                </button>
-                            </div>
-                            <button onclick="resetToCurrentWeek()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg font-bold border border-slate-300">
-                                이번 주
-                            </button>
-                        </div>
-
-                        <!-- Actions & View Mode Toggle -->
-                        <div class="flex items-center flex-wrap gap-3">
-                            <button onclick="openModal('add-event')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-lg text-xs shadow-sm transition flex items-center gap-2">
-                                <i class="fa-solid fa-plus"></i> 새 업무/행사 등록
-                            </button>
-
-                            <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
-                                <button id="weekly-view-btn-card" onclick="setWeeklySubView('card')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-white text-emerald-700 shadow-sm flex items-center gap-1.5 transition">
-                                    <i class="fa-solid fa-calendar-week"></i> 주간 상세 카드
-                                </button>
-                                <button id="weekly-view-btn-list" onclick="setWeeklySubView('list')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
-                                    <i class="fa-solid fa-list-check"></i> 전체 등록 목록
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Weekly View Mode 1: 5-Day Detailed Cards Grid (Mon-Fri) -->
-                    <div id="weekly-cards-wrapper" class="space-y-4">
-                        <div id="weekly-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-                            <!-- Dynamic rendering -->
-                        </div>
-                    </div>
-
-                    <!-- Weekly View Mode 2: Managed List Table -->
-                    <div id="weekly-list-wrapper" class="hidden">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="font-extrabold text-slate-800 text-xs flex items-center gap-2">
-                                <i class="fa-solid fa-list-check text-emerald-600"></i>
-                                전체 등록된 주간/월간 목록 (<span id="registered-count">0</span>건)
-                            </h4>
-                            <button onclick="clearAllData()" class="text-xs text-rose-600 hover:text-rose-800 hover:underline">
-                                <i class="fa-solid fa-trash-can"></i> 전체 데이터 초기화
-                            </button>
-                        </div>
-
-                        <div class="overflow-x-auto border border-slate-200 rounded-lg">
-                            <table class="w-full text-left text-xs border-collapse">
-                                <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0 border-b border-slate-200">
-                                    <tr>
-                                        <th class="py-2.5 px-3">날짜</th>
-                                        <th class="py-2.5 px-2">대상/구분</th>
-                                        <th class="py-2.5 px-3">행사/업무명</th>
-                                        <th class="py-2.5 px-3">상세/장소</th>
-                                        <th class="py-2.5 px-2">담당자</th>
-                                        <th class="py-2.5 px-2 text-center">관리</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="registered-items-tbody" class="divide-y divide-slate-200">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- TAB 2: 월중행사 취합 뷰 (Google Sheet & Calendar View) -->
-        <section id="tab-monthly" class="tab-content hidden space-y-6">
-            
-            <!-- Filter & Month Selector Controls -->
-            <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-slate-200 no-print">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    
-                    <!-- Month Selector -->
+        <!-- Top Navigation Header -->
+        <header class="bg-slate-900 text-white shadow-md shrink-0 z-40 no-print">
+            <div class="w-full px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo / Title -->
                     <div class="flex items-center space-x-3">
-                        <button onclick="changeMonth(-1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <div class="text-center">
-                            <span id="current-month-display" class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight">2026년 3월</span>
-                            <span class="text-xs text-slate-500 block">장아초등학교 월중행사 취합</span>
-                        </div>
-                        <button onclick="changeMonth(1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                        <button onclick="resetToCurrentMonth()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-2 py-1 rounded font-medium border border-slate-300">
-                            이번 달
-                        </button>
-                    </div>
-
-                    <!-- View Switcher -->
-                    <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg self-start lg:self-center border border-slate-200">
-                        <button id="view-mode-sheet" onclick="setMonthlyViewMode('sheet')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-white text-emerald-700 shadow-sm flex items-center gap-1.5 transition">
-                            <i class="fa-solid fa-table"></i> Google 시트형 취합표
-                        </button>
-                        <button id="view-mode-calendar" onclick="setMonthlyViewMode('calendar')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
-                            <i class="fa-solid fa-calendar-days"></i> 달력형
-                        </button>
-                        <button id="view-mode-list" onclick="setMonthlyViewMode('list')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
-                            <i class="fa-solid fa-list-ul"></i> 리스트/일자별
-                        </button>
-                    </div>
-
-                    <!-- Filters -->
-                    <div class="flex flex-wrap items-center gap-2 text-xs">
-                        <div>
-                            <select id="filter-grade" onchange="renderMonthlyView()" class="bg-slate-50 border border-slate-300 text-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500 font-medium">
-                                <option value="ALL">전체 학년</option>
-                                <option value="1학년">1학년</option>
-                                <option value="2학년">2학년</option>
-                                <option value="3학년">3학년</option>
-                                <option value="4학년">4학년</option>
-                                <option value="5학년">5학년</option>
-                                <option value="6학년">6학년</option>
-                                <option value="특수/유치원">특수/유치원</option>
-                                <option value="전교">전교 공통</option>
-                            </select>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-bold text-xl shadow-inner">
+                            <i class="fa-solid font-bold fa-school"></i>
                         </div>
                         <div>
-                            <select id="filter-dept" onchange="renderMonthlyView()" class="bg-slate-50 border border-slate-300 text-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500 font-medium">
-                                <option value="ALL">전체 부서</option>
-                                <option value="교무부">교무부</option>
-                                <option value="연구부">연구부</option>
-                                <option value="결자람부">결자람부</option>
-                                <option value="생활진로부">생활진로부</option>
-                                <option value="인성안전부">인성안전부</option>
-                                <option value="과학정보부">과학정보부</option>
-                                <option value="체육부">체육부</option>
-                                <option value="특수교육부">특수교육부</option>
+                            <h1 class="font-extrabold text-lg sm:text-xl tracking-tight text-white">
+                                장아초등학교
+                            </h1>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Tabs -->
+                    <nav class="flex space-x-1 sm:space-x-2">
+                        <button id="tab-btn-weekly" onclick="switchTab('weekly')" class="tab-btn active px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm transition flex items-center gap-2 bg-emerald-600 text-white shadow">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <span>주간업무 입력</span>
+                        </button>
+                        <button id="tab-btn-monthly" onclick="switchTab('monthly')" class="tab-btn px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days"></i>
+                            <span>월중행사 취합</span>
+                        </button>
+                        <button id="tab-btn-matrix" onclick="switchTab('matrix')" class="tab-btn px-3 sm:px-4 py-2 rounded-lg font-medium text-xs sm:text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-2">
+                            <i class="fa-solid fa-table-cells"></i>
+                            <span>학년/부서 일람</span>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Top Stats Banner -->
+        <div class="bg-emerald-900 text-emerald-100 py-2 px-4 sm:px-6 lg:px-8 shadow-inner text-xs sm:text-sm no-print border-b border-emerald-800 shrink-0">
+            <div class="w-full flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center gap-4">
+                    <span class="flex items-center gap-1.5 font-medium">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                        총 등록 행사/업무: <strong id="stat-total-count" class="text-white font-bold ml-1">0</strong>건
+                    </span>
+                    <span class="hidden md:inline-block text-emerald-700">|</span>
+                    <span class="hidden md:flex items-center gap-1.5 font-medium">
+                        <i class="fa-solid fa-calendar-day text-emerald-400"></i>
+                        이번 달 주요 학사일정: <strong id="stat-month-count" class="text-white font-bold ml-1">0</strong>건
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openModal('add-event')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1 rounded-md text-xs shadow transition flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> 빠른 업무/행사 등록
+                    </button>
+                    <button onclick="exportToCSV()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-md text-xs border border-slate-700 transition flex items-center gap-1">
+                        <i class="fa-solid fa-file-excel text-emerald-400"></i> CSV 내보내기
+                    </button>
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-md text-xs border border-slate-700 transition flex items-center gap-1">
+                        <i class="fa-solid fa-print"></i> 인쇄
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Scrollable Container -->
+        <main class="scrollable-content w-full px-3 sm:px-6 lg:px-8 py-6">
+
+            <!-- TAB 1: 주간업무 입력 및 상세 조회 -->
+            <section id="tab-weekly" class="tab-content block space-y-6 w-full">
+                
+                <div class="w-full space-y-6">
+                    <!-- Weekly Detailed Schedule Header & Controls -->
+                    <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4 w-full">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-4">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="changeWeek(-1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
+                                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                                    </button>
+                                    <div class="text-left">
+                                        <h3 id="weekly-range-display" class="font-extrabold text-slate-800 text-lg sm:text-xl flex items-center gap-2">
+                                            2026년 3월 1주차
+                                        </h3>
+                                        <p id="weekly-date-span" class="text-xs text-slate-500 font-medium">2026.03.02(월) ~ 2026.03.06(금)</p>
+                                    </div>
+                                    <button onclick="changeWeek(1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
+                                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                                    </button>
+                                </div>
+                                <button onclick="resetToCurrentWeek()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg font-bold border border-slate-300">
+                                    이번 주
+                                </button>
+                            </div>
+
+                            <!-- Actions & View Mode Toggle -->
+                            <div class="flex items-center flex-wrap gap-3">
+                                <button onclick="openModal('add-event')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-lg text-xs shadow-sm transition flex items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> 새 업무/행사 등록
+                                </button>
+
+                                <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                                    <button id="weekly-view-btn-card" onclick="setWeeklySubView('card')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-white text-emerald-700 shadow-sm flex items-center gap-1.5 transition">
+                                        <i class="fa-solid fa-calendar-week"></i> 주간 상세 카드
+                                    </button>
+                                    <button id="weekly-view-btn-list" onclick="setWeeklySubView('list')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
+                                        <i class="fa-solid fa-list-check"></i> 전체 등록 목록
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weekly View Mode 1: 5-Day Detailed Cards Grid (Mon-Fri) -->
+                        <div id="weekly-cards-wrapper" class="space-y-4 w-full">
+                            <div id="weekly-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 w-full">
+                                <!-- Dynamic rendering -->
+                            </div>
+                        </div>
+
+                        <!-- Weekly View Mode 2: Managed List Table -->
+                        <div id="weekly-list-wrapper" class="hidden w-full">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-extrabold text-slate-800 text-xs flex items-center gap-2">
+                                    <i class="fa-solid fa-list-check text-emerald-600"></i>
+                                    전체 등록된 주간/월간 목록 (<span id="registered-count">0</span>건)
+                                </h4>
+                                <button onclick="clearAllData()" class="text-xs text-rose-600 hover:text-rose-800 hover:underline">
+                                    <i class="fa-solid fa-trash-can"></i> 전체 데이터 초기화
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto border border-slate-200 rounded-lg w-full">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0 border-b border-slate-200">
+                                        <tr>
+                                            <th class="py-2.5 px-3">날짜</th>
+                                            <th class="py-2.5 px-2">대상/구분</th>
+                                            <th class="py-2.5 px-3">행사/업무명</th>
+                                            <th class="py-2.5 px-3">상세/장소</th>
+                                            <th class="py-2.5 px-2">담당자</th>
+                                            <th class="py-2.5 px-2 text-center">관리</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="registered-items-tbody" class="divide-y divide-slate-200">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- TAB 2: 월중행사 취합 뷰 (Google Sheet & Calendar View) -->
+            <section id="tab-monthly" class="tab-content hidden space-y-6 w-full">
+                
+                <!-- Filter & Month Selector Controls -->
+                <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-slate-200 no-print w-full">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                        
+                        <!-- Month Selector -->
+                        <div class="flex items-center space-x-3">
+                            <button onclick="changeMonth(-1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <div class="text-center">
+                                <span id="current-month-display" class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight">2026년 3월</span>
+                                <span class="text-xs text-slate-500 block">장아초등학교 월중행사 취합</span>
+                            </div>
+                            <button onclick="changeMonth(1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                            <button onclick="resetToCurrentMonth()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-2 py-1 rounded font-medium border border-slate-300">
+                                이번 달
+                            </button>
+                        </div>
+
+                        <!-- View Switcher -->
+                        <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg self-start lg:self-center border border-slate-200">
+                            <button id="view-mode-sheet" onclick="setMonthlyViewMode('sheet')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-white text-emerald-700 shadow-sm flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-table"></i> Google 시트형 취합표
+                            </button>
+                            <button id="view-mode-calendar" onclick="setMonthlyViewMode('calendar')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-calendar-days"></i> 달력형
+                            </button>
+                            <button id="view-mode-list" onclick="setMonthlyViewMode('list')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-list-ul"></i> 리스트/일자별
+                            </button>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            <div>
+                                <select id="filter-grade" onchange="renderMonthlyView()" class="bg-slate-50 border border-slate-300 text-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500 font-medium">
+                                    <option value="ALL">전체 학년</option>
+                                    <option value="1학년">1학년</option>
+                                    <option value="2학년">2학년</option>
+                                    <option value="3학년">3학년</option>
+                                    <option value="4학년">4학년</option>
+                                    <option value="5학년">5학년</option>
+                                    <option value="6학년">6학년</option>
+                                    <option value="특수/유치원">특수/유치원</option>
+                                    <option value="전교">전교 공통</option>
+                                </select>
+                            </div>
+                            <div>
+                                <select id="filter-dept" onchange="renderMonthlyView()" class="bg-slate-50 border border-slate-300 text-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500 font-medium">
+                                    <option value="ALL">전체 부서</option>
+                                    <option value="교무부">교무부</option>
+                                    <option value="연구부">연구부</option>
+                                    <option value="결자람부">결자람부</option>
+                                    <option value="생활진로부">생활진로부</option>
+                                    <option value="인성안전부">인성안전부</option>
+                                    <option value="과학정보부">과학정보부</option>
+                                    <option value="체육부">체육부</option>
+                                    <option value="특수교육부">특수교육부</option>
+                                </select>
+                            </div>
+                            <div class="relative">
+                                <input type="text" id="search-keyword" onkeyup="renderMonthlyView()" placeholder="행사/업무 검색..." class="bg-slate-50 border border-slate-300 text-slate-700 rounded-lg pl-8 pr-3 py-1.5 focus:ring-2 focus:ring-emerald-500 text-xs w-36 sm:w-48">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Print Header Notice -->
+                <div class="hidden print-only text-center mb-6">
+                    <h1 class="text-2xl font-black text-slate-900" id="print-heading">2026학년도 장아초등학교 월중행사 표</h1>
+                    <p class="text-sm text-slate-600 mt-1">인천장아초등학교 | 출력일시: <span id="print-date-stamp"></span></p>
+                </div>
+
+                <!-- VIEW MODE 1: Google Sheets Style Table -->
+                <div id="monthly-sheet-container" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full">
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-left border-collapse min-w-[900px]">
+                            <thead>
+                                <tr class="bg-emerald-800 text-white text-xs font-bold divide-x divide-emerald-700 uppercase tracking-wider">
+                                    <th class="py-3 px-3 w-16 text-center">날짜</th>
+                                    <th class="py-3 px-2 w-12 text-center">요일</th>
+                                    <th class="py-3 px-4 w-1/4">전교 학사일정 및 주요행사</th>
+                                    <th class="py-3 px-4 w-1/3">학년별 행사 / 외부강사수업</th>
+                                    <th class="py-3 px-4 w-1/3">부서별 업무 및 협조사항</th>
+                                    <th class="py-3 px-3 w-20 text-center no-print">작성/관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthly-sheet-tbody" class="divide-y divide-slate-200 text-xs sm:text-sm">
+                                <!-- Dynamic rendering -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW MODE 2: Calendar Grid -->
+                <div id="monthly-calendar-container" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-4 w-full">
+                    <div class="grid grid-cols-7 gap-px bg-slate-200 rounded-lg overflow-hidden border border-slate-200 text-xs">
+                        <div class="bg-rose-50 text-rose-700 font-bold p-2 text-center">일</div>
+                        <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">월</div>
+                        <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">화</div>
+                        <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">수</div>
+                        <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">목</div>
+                        <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">금</div>
+                        <div class="bg-blue-50 text-blue-700 font-bold p-2 text-center">토</div>
+                    </div>
+                    <div id="monthly-calendar-grid" class="grid grid-cols-7 gap-px bg-slate-200 border-b border-l border-r border-slate-200 rounded-b-lg">
+                        <!-- Dynamic rendering -->
+                    </div>
+                </div>
+
+                <!-- VIEW MODE 3: Timeline List View -->
+                <div id="monthly-list-container" class="hidden space-y-3 w-full">
+                    <div id="monthly-list-body" class="space-y-3 w-full">
+                        <!-- Dynamic rendering -->
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- TAB 3: 부서/학년별 일람표 (Matrix View) -->
+            <section id="tab-matrix" class="tab-content hidden space-y-6 w-full">
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 w-full">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-4 mb-4">
+                        <div>
+                            <h2 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
+                                <i class="fa-solid fa-table-cells text-emerald-600"></i>
+                                학년 및 부서별 한눈에 보는 일람표
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-0.5">선택한 주차/월의 모든 학년(행사/외부강사수업)과 부서별 업무가 열(Column)별로 정리되어 출력에 최적화됩니다.</p>
+                        </div>
+
+                        <div class="flex items-center space-x-2 no-print">
+                            <label class="text-xs font-bold text-slate-700">월 선택:</label>
+                            <select id="matrix-month-select" onchange="renderMatrixView()" class="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-1.5 font-bold">
+                                <!-- Populated in JS -->
                             </select>
                         </div>
-                        <div class="relative">
-                            <input type="text" id="search-keyword" onkeyup="renderMonthlyView()" placeholder="행사/업무 검색..." class="bg-slate-50 border border-slate-300 text-slate-700 rounded-lg pl-8 pr-3 py-1.5 focus:ring-2 focus:ring-emerald-500 text-xs w-36 sm:w-48">
-                            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
-                        </div>
                     </div>
 
-                </div>
-            </div>
-
-            <!-- Print Header Notice -->
-            <div class="hidden print-only text-center mb-6">
-                <h1 class="text-2xl font-black text-slate-900" id="print-heading">2026학년도 장아초등학교 월중행사 표</h1>
-                <p class="text-sm text-slate-600 mt-1">인천장아초등학교 | 출력일시: <span id="print-date-stamp"></span></p>
-            </div>
-
-            <!-- VIEW MODE 1: Google Sheets Style Table -->
-            <div id="monthly-sheet-container" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[900px]">
-                        <thead>
-                            <tr class="bg-emerald-800 text-white text-xs font-bold divide-x divide-emerald-700 uppercase tracking-wider">
-                                <th class="py-3 px-3 w-16 text-center">날짜</th>
-                                <th class="py-3 px-2 w-12 text-center">요일</th>
-                                <th class="py-3 px-4 w-1/4">전교 학사일정 및 주요행사</th>
-                                <th class="py-3 px-4 w-1/3">학년별 행사 / 외부강사수업</th>
-                                <th class="py-3 px-4 w-1/3">부서별 업무 및 협조사항</th>
-                                <th class="py-3 px-3 w-20 text-center no-print">작성/관리</th>
-                            </tr>
-                        </thead>
-                        <tbody id="monthly-sheet-tbody" class="divide-y divide-slate-200 text-xs sm:text-sm">
-                            <!-- Dynamic rendering -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- VIEW MODE 2: Calendar Grid -->
-            <div id="monthly-calendar-container" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                <div class="grid grid-cols-7 gap-px bg-slate-200 rounded-lg overflow-hidden border border-slate-200 text-xs">
-                    <div class="bg-rose-50 text-rose-700 font-bold p-2 text-center">일</div>
-                    <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">월</div>
-                    <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">화</div>
-                    <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">수</div>
-                    <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">목</div>
-                    <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">금</div>
-                    <div class="bg-blue-50 text-blue-700 font-bold p-2 text-center">토</div>
-                </div>
-                <div id="monthly-calendar-grid" class="grid grid-cols-7 gap-px bg-slate-200 border-b border-l border-r border-slate-200 rounded-b-lg min-h-[500px]">
-                    <!-- Dynamic rendering -->
-                </div>
-            </div>
-
-            <!-- VIEW MODE 3: Timeline List View -->
-            <div id="monthly-list-container" class="hidden space-y-3">
-                <div id="monthly-list-body" class="space-y-3">
-                    <!-- Dynamic rendering -->
-                </div>
-            </div>
-
-        </section>
-
-        <!-- TAB 3: 부서/학년별 일람표 (Matrix View) -->
-        <section id="tab-matrix" class="tab-content hidden space-y-6">
-            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-4 mb-4">
-                    <div>
-                        <h2 class="font-extrabold text-slate-800 text-lg flex items-center gap-2">
-                            <i class="fa-solid fa-table-cells text-emerald-600"></i>
-                            학년 및 부서별 한눈에 보는 일람표
-                        </h2>
-                        <p class="text-xs text-slate-500 mt-0.5">선택한 주차/월의 모든 학년(행사/외부강사수업)과 부서별 업무가 열(Column)별로 정리되어 출력에 최적화됩니다.</p>
-                    </div>
-
-                    <div class="flex items-center space-x-2 no-print">
-                        <label class="text-xs font-bold text-slate-700">월 선택:</label>
-                        <select id="matrix-month-select" onchange="renderMatrixView()" class="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-3 py-1.5 font-bold">
-                            <!-- Populated in JS -->
-                        </select>
+                    <div class="overflow-x-auto w-full">
+                        <table class="w-full text-left text-xs border-collapse border border-slate-300 min-w-[1000px]">
+                            <thead>
+                                <tr class="bg-slate-800 text-white font-bold divide-x divide-slate-700 text-center">
+                                    <th class="py-3 px-2 w-20">날짜/요일</th>
+                                    <th class="py-3 px-2 w-28 bg-emerald-800">1학년</th>
+                                    <th class="py-3 px-2 w-28 bg-emerald-800">2학년</th>
+                                    <th class="py-3 px-2 w-28 bg-emerald-800">3학년</th>
+                                    <th class="py-3 px-2 w-28 bg-emerald-800">4학년</th>
+                                    <th class="py-3 px-2 w-28 bg-emerald-800">5학년</th>
+                                    <th class="py-3 px-2 w-28 bg-emerald-800">6학년</th>
+                                    <th class="py-3 px-2 w-32 bg-slate-700">교무/연구/결자람</th>
+                                    <th class="py-3 px-2 w-32 bg-slate-700">생활진로/인성안전/특수</th>
+                                    <th class="py-3 px-2 w-28 bg-slate-700">과학정보/체육</th>
+                                </tr>
+                            </thead>
+                            <tbody id="matrix-tbody" class="divide-y divide-slate-300 border-b border-slate-300">
+                                <!-- Dynamic rendering -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+            </section>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse border border-slate-300">
-                        <thead>
-                            <tr class="bg-slate-800 text-white font-bold divide-x divide-slate-700 text-center">
-                                <th class="py-3 px-2 w-20">날짜/요일</th>
-                                <th class="py-3 px-2 w-28 bg-emerald-800">1학년</th>
-                                <th class="py-3 px-2 w-28 bg-emerald-800">2학년</th>
-                                <th class="py-3 px-2 w-28 bg-emerald-800">3학년</th>
-                                <th class="py-3 px-2 w-28 bg-emerald-800">4학년</th>
-                                <th class="py-3 px-2 w-28 bg-emerald-800">5학년</th>
-                                <th class="py-3 px-2 w-28 bg-emerald-800">6학년</th>
-                                <th class="py-3 px-2 w-32 bg-slate-700">교무/연구/결자람</th>
-                                <th class="py-3 px-2 w-32 bg-slate-700">생활진로/인성안전/특수</th>
-                                <th class="py-3 px-2 w-28 bg-slate-700">과학정보/체육</th>
-                            </tr>
-                        </thead>
-                        <tbody id="matrix-tbody" class="divide-y divide-slate-300 border-b border-slate-300">
-                            <!-- Dynamic rendering -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        </main>
 
-    </main>
+    </div>
 
     <!-- ADD/EDIT MODAL (Enhanced with Multi-day Date Range Options) -->
     <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -516,7 +537,55 @@
         </div>
     </div>
 
+    <!-- CUSTOM ALERT / CONFIRM MODAL -->
+    <div id="custom-dialog-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-100 transform transition-all p-5 text-center space-y-4">
+            <div id="custom-dialog-icon" class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <div>
+                <h4 id="custom-dialog-title" class="font-bold text-slate-900 text-base mb-1">알림</h4>
+                <p id="custom-dialog-message" class="text-xs text-slate-600 leading-relaxed">메시지 내용</p>
+            </div>
+            <div id="custom-dialog-buttons" class="flex justify-center space-x-2 pt-2">
+                <button id="custom-dialog-ok" onclick="closeCustomDialog(true)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition">확인</button>
+                <button id="custom-dialog-cancel" onclick="closeCustomDialog(false)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs transition hidden">취소</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let dialogCallback = null;
+
+        function showCustomAlert(message, title = "알림") {
+            document.getElementById('custom-dialog-title').innerText = title;
+            document.getElementById('custom-dialog-message').innerText = message;
+            document.getElementById('custom-dialog-cancel').classList.add('hidden');
+            document.getElementById('custom-dialog-ok').innerText = "확인";
+            document.getElementById('custom-dialog-icon').className = "w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-xl";
+            document.getElementById('custom-dialog-backdrop').classList.remove('hidden');
+            dialogCallback = null;
+        }
+
+        function showCustomConfirm(message, callback, title = "확인 요청") {
+            document.getElementById('custom-dialog-title').innerText = title;
+            document.getElementById('custom-dialog-message').innerText = message;
+            document.getElementById('custom-dialog-cancel').classList.remove('hidden');
+            document.getElementById('custom-dialog-ok').innerText = "예";
+            document.getElementById('custom-dialog-cancel').innerText = "아니오";
+            document.getElementById('custom-dialog-icon').className = "w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto text-xl";
+            document.getElementById('custom-dialog-backdrop').classList.remove('hidden');
+            dialogCallback = callback;
+        }
+
+        function closeCustomDialog(result) {
+            document.getElementById('custom-dialog-backdrop').classList.add('hidden');
+            if (dialogCallback) {
+                dialogCallback(result);
+                dialogCallback = null;
+            }
+        }
+
         function getTodayString() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -531,7 +600,6 @@
         let monthlyViewMode = 'sheet'; 
         let weeklySubViewMode = 'card'; 
 
-        // Sample initial dataset with gradeCategory
         const defaultEvents = [
             { id: '1', date: '2026-03-02', target: '전교', gradeCategory: '행사', title: '2026학년도 개학식 및 재학생 시업식', details: '각 교실 방송 (09:00~)', person: '교무부장' },
             { id: '2', date: '2026-03-03', target: '전교', gradeCategory: '행사', title: '2026학년도 신입생 입학식', details: '체육관 (10:00~), 1학년 학부모 참석', person: '1학년부장/교무' },
@@ -721,7 +789,7 @@
                 const isToday = dateStr === getTodayString();
 
                 const card = document.createElement('div');
-                card.className = `rounded-xl p-3 flex flex-col border transition ${isToday ? 'bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-200' : 'bg-slate-50 border-slate-200 hover:border-slate-300'}`;
+                card.className = `rounded-xl p-3 flex flex-col border transition h-full ${isToday ? 'bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-200' : 'bg-slate-50 border-slate-200 hover:border-slate-300'}`;
 
                 let eventsListHtml = '';
                 if (dayEvents.length === 0) {
@@ -908,7 +976,7 @@
 
             for (let i = 0; i < firstDay; i++) {
                 const cell = document.createElement('div');
-                cell.className = 'bg-slate-50/50 p-1 min-h-[90px]';
+                cell.className = 'bg-slate-50/50 p-1 min-h-[100px]';
                 grid.appendChild(cell);
             }
 
@@ -918,7 +986,7 @@
                 const dayOfWeek = new Date(year, month - 1, day).getDay();
 
                 const cell = document.createElement('div');
-                cell.className = 'bg-white p-1.5 min-h-[90px] h-auto flex flex-col justify-start border-t border-slate-100 hover:bg-slate-50 transition cursor-pointer relative group';
+                cell.className = 'bg-white p-1.5 min-h-[100px] h-auto flex flex-col justify-start border-t border-slate-100 hover:bg-slate-50 transition cursor-pointer relative group';
                 cell.onclick = (e) => {
                     if (!e.target.closest('button')) openModalForDate(dateStr);
                 };
@@ -958,7 +1026,7 @@
 
             if (filteredEvents.length === 0) {
                 listBody.innerHTML = `
-                    <div class="bg-white p-8 rounded-xl text-center text-slate-400">
+                    <div class="bg-white p-8 rounded-xl text-center text-slate-400 w-full">
                         <i class="fa-regular fa-calendar-xmark text-3xl mb-2"></i>
                         <p class="text-xs">등록된 일정이나 행사가 없습니다.</p>
                     </div>
@@ -971,7 +1039,7 @@
             filteredEvents.forEach(e => {
                 const isExt = e.gradeCategory === '외부강사수업';
                 const itemDiv = document.createElement('div');
-                itemDiv.className = `bg-white p-4 rounded-xl border ${isExt ? 'border-purple-200 bg-purple-50/30' : 'border-slate-200'} shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3`;
+                itemDiv.className = `bg-white p-4 rounded-xl border ${isExt ? 'border-purple-200 bg-purple-50/30' : 'border-slate-200'} shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full`;
                 itemDiv.innerHTML = `
                     <div class="flex items-start space-x-3">
                         <div class="bg-emerald-50 text-emerald-800 font-extrabold px-3 py-2 rounded-lg text-center border border-emerald-200 shrink-0">
@@ -1132,10 +1200,14 @@
         }
 
         function deleteEvent(id) {
-            eventList = eventList.filter(item => item.id !== id);
-            saveData();
-            renderAllViews();
-            showToast('일정이 삭제되었습니다.');
+            showCustomConfirm('선택하신 일정을 삭제하시겠습니까?', (confirmed) => {
+                if (confirmed) {
+                    eventList = eventList.filter(item => item.id !== id);
+                    saveData();
+                    renderAllViews();
+                    showToast('일정이 삭제되었습니다.');
+                }
+            }, '일정 삭제');
         }
 
         function duplicateEvent(id) {
@@ -1232,7 +1304,6 @@
             const dateMode = document.querySelector('input[name="modal-date-mode"]:checked').value;
 
             if (dateMode === 'single' || id) {
-                // Single day insert / edit
                 const date = document.getElementById('modal-date').value;
                 if (id) {
                     const index = eventList.findIndex(i => i.id === id);
@@ -1247,13 +1318,12 @@
                 }
                 showToast('성공적으로 저장되었습니다.');
             } else {
-                // Multi-day Batch Insertion
                 const startDateStr = document.getElementById('modal-start-date').value;
                 const endDateStr = document.getElementById('modal-end-date').value;
                 const rangeFilter = document.querySelector('input[name="modal-range-filter"]:checked').value;
 
                 if (!startDateStr || !endDateStr) {
-                    alert('시작일과 종료일을 정확히 입력해주세요.');
+                    showCustomAlert('시작일과 종료일을 정확히 입력해주세요.');
                     return;
                 }
 
@@ -1261,7 +1331,7 @@
                 let end = new Date(endDateStr);
 
                 if (start > end) {
-                    alert('종료일은 시작일보다 이후 날짜여야 합니다.');
+                    showCustomAlert('종료일은 시작일보다 이후 날짜여야 합니다.');
                     return;
                 }
 
@@ -1297,12 +1367,14 @@
         }
 
         function clearAllData() {
-            if (confirm('모든 주간업무 및 월중행사 데이터를 초기화하시겠습니까?')) {
-                eventList = [];
-                saveData();
-                renderAllViews();
-                showToast('전체 데이터가 초기화되었습니다.');
-            }
+            showCustomConfirm('모든 주간업무 및 월중행사 데이터를 초기화하시겠습니까?', (confirmed) => {
+                if (confirmed) {
+                    eventList = [];
+                    saveData();
+                    renderAllViews();
+                    showToast('전체 데이터가 초기화되었습니다.');
+                }
+            }, '전체 데이터 초기화');
         }
 
         function exportToCSV() {
