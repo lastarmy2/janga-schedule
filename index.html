@@ -457,6 +457,34 @@
                     <div>
                         <label class="block font-bold text-emerald-900 mb-1">반복 및 포함 기준 *</label>
                         <div class="flex items-center space-x-4">
+                    <button onclick="openModal('add-event')" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1 rounded-md text-xs shadow transition flex items-center gap-1">
+                        <i class="fa-solid fa-plus"></i> 빠른 업무/행사 등록
+                    </button>
+                    <button onclick="exportToCSV()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-md text-xs border border-slate-700 transition flex items-center gap-1">
+                        <i class="fa-solid fa-file-excel text-emerald-400"></i> CSV 내보내기
+                    </button>
+                <!-- Single Date Selector -->
+                <div id="container-single-date">
+                    <label class="block font-bold text-slate-700 mb-1">날짜 *</label>
+                    <input type="date" id="modal-date" class="w-full bg-slate-50 border border-slate-300 p-2 rounded-lg font-medium focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <!-- Multi-day Range Selector (Hidden by default) -->
+                <div id="container-range-date" class="hidden space-y-3 bg-emerald-50/50 p-3 rounded-xl border border-emerald-200">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-bold text-emerald-900 mb-1">시작일 *</label>
+                            <input type="date" id="modal-start-date" class="w-full bg-white border border-emerald-300 p-2 rounded-lg font-medium focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-emerald-900 mb-1">종료일 *</label>
+                            <input type="date" id="modal-end-date" class="w-full bg-white border border-emerald-300 p-2 rounded-lg font-medium focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-emerald-900 mb-1">반복 및 포함 기준 *</label>
+                        <div class="flex items-center space-x-4">
                             <label class="inline-flex items-center gap-1.5 cursor-pointer font-semibold text-slate-800">
                                 <input type="radio" name="modal-range-filter" value="weekdays" checked class="w-4 h-4 text-emerald-600">
                                 <span>평일만 (월~금요일)</span>
@@ -495,49 +523,6 @@
                             <option value="특수교육부">특수교육부</option>
                         </optgroup>
                     </select>
-                </div>
-
-                <!-- 학년 선택 시 행사 vs 외부강사수업 세부 구분 선택 영역 -->
-                <div id="modal-grade-category-container" class="hidden bg-emerald-50/60 p-3 rounded-xl border border-emerald-200">
-                    <label class="block font-bold text-emerald-900 mb-1.5 flex items-center gap-1.5">
-                        <i class="fa-solid fa-filter text-emerald-600"></i> 학년 일정 구분 *
-                    </label>
-                    <div class="flex items-center space-x-6">
-                        <label class="inline-flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="modal-grade-category" value="행사" checked class="w-4 h-4 text-emerald-600 focus:ring-emerald-500 border-slate-300">
-                            <span class="font-bold text-slate-800">학교 / 학년 행사</span>
-                        </label>
-                        <label class="inline-flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="modal-grade-category" value="외부강사수업" class="w-4 h-4 text-purple-600 focus:ring-purple-500 border-slate-300">
-                            <span class="font-bold text-purple-900 flex items-center gap-1">
-                                <span class="w-2 h-2 rounded-full bg-purple-600 inline-block"></span>
-                                외부강사 수업
-                            </span>
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">행사/업무 제목 *</label>
-                    <input type="text" id="modal-title-input" required placeholder="예: 생존수영 교육주간 / 외부강사 소프트웨어 수업" class="w-full bg-slate-50 border border-slate-300 p-2 rounded-lg font-medium focus:ring-2 focus:ring-emerald-500">
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">장소 및 상세 협조사항</label>
-                    <input type="text" id="modal-details" placeholder="예: 수영장 / 컴퓨터실, 3~4교시 (강사: OOO)" class="w-full bg-slate-50 border border-slate-300 p-2 rounded-lg font-medium focus:ring-2 focus:ring-emerald-500">
-                </div>
-
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">담당자</label>
-                    <input type="text" id="modal-person" placeholder="예: 교무부장, 3학년 부장, 외부강사" class="w-full bg-slate-50 border border-slate-300 p-2 rounded-lg font-medium focus:ring-2 focus:ring-emerald-500">
-                </div>
-
-                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition">취소</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-check"></i>
-                        <span>저장하기</span>
-                    </button>
                 </div>
             </form>
         </div>
@@ -1214,34 +1199,34 @@
             } else {
                 document.querySelector('input[name="modal-grade-category"][value="행사"]').checked = true;
             }
+        function toggleDateModeUI() {
+            const mode = document.querySelector('input[name="modal-date-mode"]:checked').value;
+            const singleContainer = document.getElementById('container-single-date');
+            const rangeContainer = document.getElementById('container-range-date');
 
-            document.getElementById('modal-title').innerText = '일정 복사 등록 (다른 날짜 선택 가능)';
-            document.getElementById('modal-backdrop').classList.remove('hidden');
+            if (mode === 'single') {
+                singleContainer.classList.remove('hidden');
+                rangeContainer.classList.add('hidden');
+            } else {
+                singleContainer.classList.add('hidden');
+                rangeContainer.classList.remove('hidden');
+                
+                const curDate = document.getElementById('modal-date').value || getTodayString();
+                document.getElementById('modal-start-date').value = curDate;
+                document.getElementById('modal-end-date').value = curDate;
+            }
         }
 
-        function editEvent(id) {
-            const item = eventList.find(i => i.id === id);
-            if (!item) return;
-
-            document.getElementById('modal-item-id').value = item.id;
-            document.getElementById('modal-date').value = item.date;
-            document.getElementById('modal-target').value = item.target;
-            document.getElementById('modal-title-input').value = item.title;
-            document.getElementById('modal-details').value = item.details || '';
-            document.getElementById('modal-person').value = item.person || '';
-
-            document.querySelector('input[name="modal-date-mode"][value="single"]').checked = true;
-            toggleDateModeUI();
-            onModalTargetChange();
-
-            if (item.gradeCategory === '외부강사수업') {
-                document.querySelector('input[name="modal-grade-category"][value="외부강사수업"]').checked = true;
+        function onModalTargetChange() {
+            const targetVal = document.getElementById('modal-target').value;
+            const container = document.getElementById('modal-grade-category-container');
+            const isGradeTarget = targetVal.includes('학년') || targetVal === '특수' || targetVal === '유치원' || targetVal === '전교';
+            
+            if (isGradeTarget) {
+                container.classList.remove('hidden');
             } else {
-                document.querySelector('input[name="modal-grade-category"][value="행사"]').checked = true;
+                container.classList.add('hidden');
             }
-
-            document.getElementById('modal-title').innerText = '업무/행사 수정';
-            document.getElementById('modal-backdrop').classList.remove('hidden');
         }
 
         function openModalForDate(dateStr) {
@@ -1262,7 +1247,7 @@
             document.getElementById('modal-backdrop').classList.remove('hidden');
         }
 
-        function openModal() {
+        function openModal(mode = 'add-event') {
             openModalForDate(getTodayString());
         }
 
@@ -1278,7 +1263,7 @@
             const details = document.getElementById('modal-details').value.trim();
             const person = document.getElementById('modal-person').value.trim();
 
-            const isGradeTarget = target.includes('학년') || target === '특수/유치원';
+            const isGradeTarget = target.includes('학년') || target === '특수' || target === '유치원' || target === '전교';
             let gradeCategory = '행사';
             if (isGradeTarget) {
                 const checkedRadio = document.querySelector('input[name="modal-grade-category"]:checked');
