@@ -43,12 +43,31 @@
         }
       },
       "required": ["id", "date", "target", "title"]
+    },
+    "DepartmentSetting": {
+      "title": "DepartmentSetting",
+      "description": "학교 부서 목록 설정",
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "부서 목록"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "수정 일시"
+        }
+      }
     }
   },
   "firestore": {
     "/events/{eventId}": {
       "schema": "Event",
       "description": "장아초등학교 주간 및 월간 행사/업무 컬렉션"
+    },
+    "/settings/{settingId}": {
+      "schema": "DepartmentSetting",
+      "description": "학교 부서 및 환경설정 컬렉션"
     }
   }
 }

@@ -27,11 +27,23 @@ service cloud.firestore {
              (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
     }
 
+    function isValidSetting(data) {
+      return (!('items' in data) || (data.items is list && data.items.size() <= 60)) &&
+             (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
     match /events/{eventId} {
       allow read: if true;
       allow create: if isValidId(eventId) && isValidEvent(incoming());
       allow update: if isValidId(eventId) && isValidEvent(incoming());
       allow delete: if isValidId(eventId);
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create: if isValidId(settingId) && isValidSetting(incoming());
+      allow update: if isValidId(settingId) && isValidSetting(incoming());
+      allow delete: if isValidId(settingId);
     }
   }
 }
