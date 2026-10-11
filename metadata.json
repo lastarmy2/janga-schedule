@@ -1,0 +1,6 @@
+{
+  "name": "2026학년도 장아초 주간업무 & 월중행사 자동 취합 시스템",
+  "description": "장아초등학교 주간업무 및 월중행사 자동 취합 및 일람 관리 시스템",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

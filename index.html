@@ -3,6 +3,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2026학년도 장아초 주간업무 & 월중행사 자동 취합 시스템</title>
+    <meta name="description" content="장아초등학교 주간업무 및 월중행사 자동 취합 및 일람 관리 시스템">
+    <meta property="og:title" content="2026학년도 장아초 주간업무 & 월중행사 자동 취합 시스템">
+    <meta property="og:description" content="장아초등학교 주간업무 및 월중행사 자동 취합 및 일람 관리 시스템">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -115,6 +118,11 @@
                     <span class="hidden md:flex items-center gap-1.5 font-medium">
                         <i class="fa-solid fa-calendar-day text-emerald-400"></i>
                         이번 달 주요 학사일정: <strong id="stat-month-count" class="text-white font-bold ml-1">0</strong>건
+                    </span>
+                    <span class="hidden lg:inline-block text-emerald-700">|</span>
+                    <span class="hidden lg:flex items-center gap-1.5 font-medium text-emerald-300">
+                        <i id="db-status-icon" class="fa-solid fa-cloud text-emerald-400 animate-pulse"></i>
+                        <span id="db-status-text">클라우드 DB 연결 중...</span>
                     </span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -269,7 +277,8 @@
                                     <option value="4학년">4학년</option>
                                     <option value="5학년">5학년</option>
                                     <option value="6학년">6학년</option>
-                                    <option value="특수/유치원">특수/유치원</option>
+                                    <option value="특수">특수</option>
+                                    <option value="유치원">유치원</option>
                                     <option value="전교">전교 공통</option>
                                 </select>
                             </div>
@@ -372,15 +381,17 @@
                             <thead>
                                 <tr class="bg-slate-800 text-white font-bold divide-x divide-slate-700 text-center">
                                     <th class="py-3 px-2 w-20">날짜/요일</th>
-                                    <th class="py-3 px-2 w-28 bg-emerald-800">1학년</th>
-                                    <th class="py-3 px-2 w-28 bg-emerald-800">2학년</th>
-                                    <th class="py-3 px-2 w-28 bg-emerald-800">3학년</th>
-                                    <th class="py-3 px-2 w-28 bg-emerald-800">4학년</th>
-                                    <th class="py-3 px-2 w-28 bg-emerald-800">5학년</th>
-                                    <th class="py-3 px-2 w-28 bg-emerald-800">6학년</th>
-                                    <th class="py-3 px-2 w-32 bg-slate-700">교무/연구/결자람</th>
-                                    <th class="py-3 px-2 w-32 bg-slate-700">생활진로/인성안전/특수</th>
-                                    <th class="py-3 px-2 w-28 bg-slate-700">과학정보/체육</th>
+                                    <th class="py-3 px-2 w-24 bg-emerald-800">1학년</th>
+                                    <th class="py-3 px-2 w-24 bg-emerald-800">2학년</th>
+                                    <th class="py-3 px-2 w-24 bg-emerald-800">3학년</th>
+                                    <th class="py-3 px-2 w-24 bg-emerald-800">4학년</th>
+                                    <th class="py-3 px-2 w-24 bg-emerald-800">5학년</th>
+                                    <th class="py-3 px-2 w-24 bg-emerald-800">6학년</th>
+                                    <th class="py-3 px-2 w-24 bg-teal-800">특수</th>
+                                    <th class="py-3 px-2 w-24 bg-teal-800">유치원</th>
+                                    <th class="py-3 px-2 w-28 bg-slate-700">교무/연구/결자람</th>
+                                    <th class="py-3 px-2 w-28 bg-slate-700">생활진로/인성안전</th>
+                                    <th class="py-3 px-2 w-28 bg-slate-700">과학정보/체육/특수부</th>
                                 </tr>
                             </thead>
                             <tbody id="matrix-tbody" class="divide-y divide-slate-300 border-b border-slate-300">
@@ -477,7 +488,8 @@
                             <option value="4학년">4학년</option>
                             <option value="5학년">5학년</option>
                             <option value="6학년">6학년</option>
-                            <option value="특수/유치원">특수/유치원</option>
+                            <option value="특수">특수</option>
+                            <option value="유치원">유치원</option>
                         </optgroup>
                         <optgroup label="부서">
                             <option value="교무부">교무부</option>
@@ -555,7 +567,133 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            getDocs, 
+            setDoc, 
+            deleteDoc, 
+            onSnapshot, 
+            getDocFromServer 
+        } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+
+        let db = null;
+        let auth = null;
+        let isFirestoreReady = false;
+
+        const OperationType = {
+            CREATE: 'create',
+            UPDATE: 'update',
+            DELETE: 'delete',
+            LIST: 'list',
+            GET: 'get',
+            WRITE: 'write',
+        };
+
+        function handleFirestoreError(error, operationType, path) {
+            const errInfo = {
+                error: error instanceof Error ? error.message : String(error),
+                authInfo: {
+                    userId: auth?.currentUser?.uid || null,
+                    email: auth?.currentUser?.email || null,
+                    emailVerified: auth?.currentUser?.emailVerified || null,
+                    isAnonymous: auth?.currentUser?.isAnonymous || null,
+                },
+                operationType,
+                path
+            };
+            console.error('Firestore Error: ', JSON.stringify(errInfo));
+            throw new Error(JSON.stringify(errInfo));
+        }
+
+        function updateDbStatus(isConnected) {
+            const icon = document.getElementById('db-status-icon');
+            const text = document.getElementById('db-status-text');
+            if (!icon || !text) return;
+            if (isConnected) {
+                icon.className = "fa-solid fa-cloud text-emerald-400";
+                text.innerText = "클라우드 DB 실시간 연결됨";
+            } else {
+                icon.className = "fa-solid fa-cloud-arrow-down text-amber-300";
+                text.innerText = "로컬 모드로 작동 중";
+            }
+        }
+
+        async function testConnection() {
+            try {
+                await getDocFromServer(doc(db, 'test', 'connection'));
+            } catch (error) {
+                if (error instanceof Error && error.message.includes('the client is offline')) {
+                    console.error("Please check your Firebase configuration.");
+                }
+            }
+        }
+
+        async function initFirebase() {
+            try {
+                const res = await fetch('/api/firebase-config');
+                if (!res.ok) throw new Error('Firebase config endpoint error');
+                const firebaseConfig = await res.json();
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+                auth = getAuth(app);
+                isFirestoreReady = true;
+
+                await testConnection();
+                updateDbStatus(true);
+                subscribeToEvents();
+            } catch (err) {
+                console.warn('Firebase init error, fallback to local storage:', err);
+                updateDbStatus(false);
+                loadDataFromLocal();
+            }
+        }
+
+        function subscribeToEvents() {
+            const eventsCol = collection(db, 'events');
+            onSnapshot(eventsCol, async (snapshot) => {
+                if (snapshot.empty && !localStorage.getItem('jangah_db_seeded')) {
+                    localStorage.setItem('jangah_db_seeded', 'true');
+                    for (const item of defaultEvents) {
+                        try {
+                            await setDoc(doc(db, 'events', item.id), item);
+                        } catch (e) {
+                            console.error('Seed error:', e);
+                        }
+                    }
+                    return;
+                }
+
+                const items = [];
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    items.push({
+                        id: docSnap.id,
+                        date: data.date,
+                        target: data.target === '특수/유치원' ? '특수' : data.target,
+                        gradeCategory: data.gradeCategory || '행사',
+                        title: data.title,
+                        details: data.details || '',
+                        person: data.person || '',
+                        createdAt: data.createdAt || '',
+                        updatedAt: data.updatedAt || ''
+                    });
+                });
+
+                if (items.length > 0 || localStorage.getItem('jangah_db_seeded')) {
+                    eventList = items;
+                    localStorage.setItem('jangah_2026_events', JSON.stringify(eventList));
+                    renderAllViews();
+                }
+            }, (error) => {
+                handleFirestoreError(error, OperationType.GET, 'events');
+            });
+        }
+
         let dialogCallback = null;
 
         function showCustomAlert(message, title = "알림") {
@@ -616,32 +754,40 @@
 
         let eventList = [];
 
-        function loadData() {
+        function loadDataFromLocal() {
             const saved = localStorage.getItem('jangah_2026_events');
             if (saved) {
                 try {
                     eventList = JSON.parse(saved);
+                    eventList.forEach(item => {
+                        if (item.target === '특수/유치원') item.target = '특수';
+                    });
                 } catch (e) {
                     eventList = [...defaultEvents];
                 }
             } else {
                 eventList = [...defaultEvents];
-                saveData();
+                saveDataToLocal();
             }
+            renderAllViews();
         }
 
-        function saveData() {
+        function saveDataToLocal() {
             localStorage.setItem('jangah_2026_events', JSON.stringify(eventList));
             updateStats();
         }
 
         window.onload = function() {
-            loadData();
+            loadDataFromLocal();
             setupMonthDropdown();
             renderAllViews();
+            initFirebase();
             
             const now = new Date();
-            document.getElementById('print-date-stamp').innerText = `${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
+            const dateStamp = document.getElementById('print-date-stamp');
+            if (dateStamp) {
+                dateStamp.innerText = `${now.getFullYear()}.${now.getMonth()+1}.${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
+            }
         };
 
         function switchTab(tabName) {
@@ -863,8 +1009,13 @@
                 if (!e.date.startsWith(monthStr)) return false;
                 
                 if (gradeFilter !== 'ALL') {
-                    if (gradeFilter === '특수/유치원' && e.target !== '특수/유치원') return false;
-                    else if (gradeFilter !== '특수/유치원' && e.target !== gradeFilter && e.target !== '전교') return false;
+                    if (gradeFilter === '특수') {
+                        if (e.target !== '특수' && e.target !== '특수/유치원' && e.target !== '전교') return false;
+                    } else if (gradeFilter === '유치원') {
+                        if (e.target !== '유치원' && e.target !== '전교') return false;
+                    } else if (e.target !== gradeFilter && e.target !== '전교') {
+                        return false;
+                    }
                 }
 
                 if (deptFilter !== 'ALL') {
@@ -894,8 +1045,8 @@
                 const dayItems = filtered.filter(item => item.date === dateString);
 
                 const schoolItems = dayItems.filter(i => i.target === '전교');
-                const gradeItems = dayItems.filter(i => i.target.includes('학년') || i.target === '특수/유치원');
-                const deptItems = dayItems.filter(i => i.target.includes('부') || i.target === '행정실');
+                const gradeItems = dayItems.filter(i => i.target.includes('학년') || i.target === '특수' || i.target === '유치원' || i.target === '특수/유치원');
+                const deptItems = dayItems.filter(i => i.target.includes('부') || i.target === '행정실' || (!i.target.includes('학년') && i.target !== '특수' && i.target !== '유치원' && i.target !== '전교'));
 
                 const tr = document.createElement('tr');
                 tr.className = `hover:bg-amber-50/50 transition ${isWeekend ? 'bg-slate-50/80' : 'bg-white'}`;
@@ -1132,7 +1283,12 @@
                 const dayEvents = eventList.filter(e => e.date === dateStr);
 
                 const getTargetContent = (targetName) => {
-                    const match = dayEvents.filter(e => e.target === targetName || (targetName.includes('학년') && e.target === '전교'));
+                    const match = dayEvents.filter(e => {
+                        if (targetName === '특수') {
+                            return e.target === '특수' || e.target === '특수/유치원';
+                        }
+                        return e.target === targetName || (targetName.includes('학년') && e.target === '전교');
+                    });
                     if (match.length === 0) return '-';
                     return match.map(m => {
                         const isExt = m.gradeCategory === '외부강사수업';
@@ -1156,9 +1312,11 @@
                     <td class="py-2 px-2 align-top">${getTargetContent('4학년')}</td>
                     <td class="py-2 px-2 align-top">${getTargetContent('5학년')}</td>
                     <td class="py-2 px-2 align-top">${getTargetContent('6학년')}</td>
+                    <td class="py-2 px-2 align-top">${getTargetContent('특수')}</td>
+                    <td class="py-2 px-2 align-top">${getTargetContent('유치원')}</td>
                     <td class="py-2 px-2 align-top">${getTargetContent('교무부')}${getTargetContent('연구부')}${getTargetContent('결자람부')}</td>
-                    <td class="py-2 px-2 align-top">${getTargetContent('생활진로부')}${getTargetContent('인성안전부')}${getTargetContent('특수교육부')}</td>
-                    <td class="py-2 px-2 align-top">${getTargetContent('과학정보부')}${getTargetContent('체육부')}</td>
+                    <td class="py-2 px-2 align-top">${getTargetContent('생활진로부')}${getTargetContent('인성안전부')}</td>
+                    <td class="py-2 px-2 align-top">${getTargetContent('과학정보부')}${getTargetContent('체육부')}${getTargetContent('특수교육부')}</td>
                 `;
                 tbody.appendChild(tr);
             }
@@ -1191,7 +1349,7 @@
         function onModalTargetChange() {
             const targetVal = document.getElementById('modal-target').value;
             const container = document.getElementById('modal-grade-category-container');
-            const isGradeTarget = targetVal.includes('학년') || targetVal === '특수/유치원';
+            const isGradeTarget = targetVal.includes('학년') || targetVal === '특수' || targetVal === '유치원' || targetVal === '특수/유치원';
             
             if (isGradeTarget) {
                 container.classList.remove('hidden');
@@ -1201,11 +1359,18 @@
         }
 
         function deleteEvent(id) {
-            showCustomConfirm('선택하신 일정을 삭제하시겠습니까?', (confirmed) => {
+            showCustomConfirm('선택하신 일정을 삭제하시겠습니까?', async (confirmed) => {
                 if (confirmed) {
                     eventList = eventList.filter(item => item.id !== id);
-                    saveData();
+                    saveDataToLocal();
                     renderAllViews();
+                    if (isFirestoreReady && db) {
+                        try {
+                            await deleteDoc(doc(db, 'events', id));
+                        } catch (err) {
+                            handleFirestoreError(err, OperationType.DELETE, `events/${id}`);
+                        }
+                    }
                     showToast('일정이 삭제되었습니다.');
                 }
             }, '일정 삭제');
@@ -1287,7 +1452,7 @@
             document.getElementById('modal-backdrop').classList.add('hidden');
         }
 
-        function handleModalSubmit(e) {
+        async function handleModalSubmit(e) {
             e.preventDefault();
             const id = document.getElementById('modal-item-id').value;
             const target = document.getElementById('modal-target').value;
@@ -1295,7 +1460,7 @@
             const details = document.getElementById('modal-details').value.trim();
             const person = document.getElementById('modal-person').value.trim();
 
-            const isGradeTarget = target.includes('학년') || target === '특수/유치원';
+            const isGradeTarget = target.includes('학년') || target === '특수' || target === '유치원' || target === '특수/유치원';
             let gradeCategory = '행사';
             if (isGradeTarget) {
                 const checkedRadio = document.querySelector('input[name="modal-grade-category"]:checked');
@@ -1303,20 +1468,29 @@
             }
 
             const dateMode = document.querySelector('input[name="modal-date-mode"]:checked').value;
+            const itemsToSave = [];
 
             if (dateMode === 'single' || id) {
                 const date = document.getElementById('modal-date').value;
+                const itemId = id || `${Date.now()}`;
+                const eventObj = {
+                    id: itemId,
+                    date,
+                    target,
+                    gradeCategory,
+                    title,
+                    details,
+                    person,
+                    updatedAt: new Date().toISOString()
+                };
+
                 if (id) {
                     const index = eventList.findIndex(i => i.id === id);
-                    if (index !== -1) {
-                        eventList[index] = { id, date, target, gradeCategory, title, details, person };
-                    }
+                    if (index !== -1) eventList[index] = eventObj;
                 } else {
-                    eventList.push({
-                        id: Date.now().toString(),
-                        date, target, gradeCategory, title, details, person
-                    });
+                    eventList.push(eventObj);
                 }
+                itemsToSave.push(eventObj);
                 showToast('성공적으로 저장되었습니다.');
             } else {
                 const startDateStr = document.getElementById('modal-start-date').value;
@@ -1349,11 +1523,18 @@
                         const dd = String(current.getDate()).padStart(2, '0');
                         const dateFormatted = `${yyyy}-${mm}-${dd}`;
 
-                        eventList.push({
-                            id: `${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+                        const eventObj = {
+                            id: `${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
                             date: dateFormatted,
-                            target, gradeCategory, title, details, person
-                        });
+                            target,
+                            gradeCategory,
+                            title,
+                            details,
+                            person,
+                            updatedAt: new Date().toISOString()
+                        };
+                        eventList.push(eventObj);
+                        itemsToSave.push(eventObj);
                         addedCount++;
                     }
                     current.setDate(current.getDate() + 1);
@@ -1362,17 +1543,37 @@
                 showToast(`총 ${addedCount}개 날짜에 기간 일정이 일괄 등록되었습니다.`);
             }
 
-            saveData();
+            saveDataToLocal();
             renderAllViews();
             closeModal();
+
+            if (isFirestoreReady && db) {
+                for (const item of itemsToSave) {
+                    try {
+                        await setDoc(doc(db, 'events', item.id), item);
+                    } catch (err) {
+                        handleFirestoreError(err, OperationType.WRITE, `events/${item.id}`);
+                    }
+                }
+            }
         }
 
         function clearAllData() {
-            showCustomConfirm('모든 주간업무 및 월중행사 데이터를 초기화하시겠습니까?', (confirmed) => {
+            showCustomConfirm('모든 주간업무 및 월중행사 데이터를 초기화하시겠습니까?', async (confirmed) => {
                 if (confirmed) {
                     eventList = [];
-                    saveData();
+                    saveDataToLocal();
                     renderAllViews();
+                    if (isFirestoreReady && db) {
+                        try {
+                            const snapshot = await getDocs(collection(db, 'events'));
+                            snapshot.forEach(docSnap => {
+                                deleteDoc(doc(db, 'events', docSnap.id));
+                            });
+                        } catch (err) {
+                            handleFirestoreError(err, OperationType.DELETE, 'events');
+                        }
+                    }
                     showToast('전체 데이터가 초기화되었습니다.');
                 }
             }, '전체 데이터 초기화');
@@ -1419,6 +1620,31 @@
                       .replace(/"/g, "&quot;")
                       .replace(/'/g, "&#039;");
         }
+
+        // Export all handler functions to window for HTML inline access
+        window.switchTab = switchTab;
+        window.setMonthlyViewMode = setMonthlyViewMode;
+        window.setWeeklySubView = setWeeklySubView;
+        window.changeMonth = changeMonth;
+        window.changeWeek = changeWeek;
+        window.resetToCurrentWeek = resetToCurrentWeek;
+        window.resetToCurrentMonth = resetToCurrentMonth;
+        window.openModal = openModal;
+        window.openModalForDate = openModalForDate;
+        window.closeModal = closeModal;
+        window.handleModalSubmit = handleModalSubmit;
+        window.duplicateEvent = duplicateEvent;
+        window.editEvent = editEvent;
+        window.deleteEvent = deleteEvent;
+        window.clearAllData = clearAllData;
+        window.exportToCSV = exportToCSV;
+        window.toggleDateModeUI = toggleDateModeUI;
+        window.onModalTargetChange = onModalTargetChange;
+        window.closeCustomDialog = closeCustomDialog;
+        window.renderMonthlyView = renderMonthlyView;
+        window.renderMatrixView = renderMatrixView;
+        window.showCustomAlert = showCustomAlert;
+        window.showCustomConfirm = showCustomConfirm;
     </script>
 </body>
 </html>
