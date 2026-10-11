@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -51,7 +50,7 @@
 
     <!-- Top Navigation Header -->
     <header class="bg-slate-900 text-white shadow-md sticky top-0 z-40 no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="w-full px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo / Title -->
                 <div class="flex items-center space-x-3">
@@ -59,10 +58,9 @@
                         <i class="fa-solid font-bold fa-school"></i>
                     </div>
                     <div>
-                        <h1 class="font-extrabold text-lg sm:text-xl tracking-tight text-white flex items-center gap-2">
-                            장아초등학교 <span class="bg-emerald-600 text-emerald-100 text-xs px-2 py-0.5 rounded-full font-medium">2026학년도</span>
+                        <h1 class="font-extrabold text-lg sm:text-xl tracking-tight text-white">
+                            장아초등학교
                         </h1>
-                        <p class="text-xs text-slate-300 hidden sm:block">주간업무 및 월중행사 자동 통합 관리 시스템</p>
                     </div>
                 </div>
 
@@ -86,8 +84,8 @@
     </header>
 
     <!-- Top Stats Banner -->
-    <div class="bg-emerald-900 text-emerald-100 py-2 px-4 shadow-inner text-xs sm:text-sm no-print border-b border-emerald-800">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+    <div class="bg-emerald-900 text-emerald-100 py-2 px-4 sm:px-6 lg:px-8 shadow-inner text-xs sm:text-sm no-print border-b border-emerald-800">
+        <div class="w-full flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-4">
                 <span class="flex items-center gap-1.5 font-medium">
                     <i class="fa-solid fa-circle-check text-emerald-400"></i>
@@ -114,7 +112,7 @@
     </div>
 
     <!-- Main Container -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6">
+    <main class="flex-grow w-full px-3 sm:px-6 lg:px-8 py-6">
 
         <!-- TAB 1: 주간업무 입력 및 상세 조회 -->
         <section id="tab-weekly" class="tab-content block space-y-6">
