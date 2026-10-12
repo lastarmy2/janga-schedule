@@ -426,9 +426,9 @@
     </div>
 
     <!-- ADD/EDIT MODAL (Enhanced with Multi-day Date Range Options) -->
-    <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 transform transition-all">
-            <div class="bg-slate-900 text-white p-4 flex items-center justify-between">
+    <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-100 transform transition-all my-auto">
+            <div class="bg-slate-900 text-white p-4 flex items-center justify-between shrink-0">
                 <h3 class="font-bold text-base flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square text-emerald-400"></i>
                     <span id="modal-title">빠른 일정/행사 등록</span>
@@ -438,8 +438,9 @@
                 </button>
             </div>
             
-            <form id="modal-form" onsubmit="handleModalSubmit(event)" class="p-5 space-y-4 text-xs">
-                <input type="hidden" id="modal-item-id" value="">
+            <form id="modal-form" onsubmit="handleModalSubmit(event)" class="flex flex-col flex-1 overflow-hidden min-h-0 text-xs">
+                <div class="p-5 space-y-4 overflow-y-auto flex-1">
+                    <input type="hidden" id="modal-item-id" value="">
                 
                 <!-- NEW: Schedule Mode Selector (Single Day vs Date Range / Repeats) -->
                 <div class="bg-slate-100 p-2.5 rounded-xl border border-slate-200">
@@ -561,9 +562,11 @@
                     <input type="text" id="modal-person" placeholder="" class="w-full bg-slate-50 border border-slate-300 p-2 rounded-lg font-medium focus:ring-2 focus:ring-emerald-500">
                 </div>
 
-                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition">취소</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition flex items-center gap-1.5">
+                </div>
+
+                <div class="flex justify-end space-x-2 p-4 bg-slate-50 border-t border-slate-200 shrink-0">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-lg border border-slate-300 transition shadow-xs">취소</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition flex items-center gap-1.5 shadow-xs">
                         <i class="fa-solid fa-check"></i>
                         <span>저장하기</span>
                     </button>
@@ -870,27 +873,37 @@
             }
         }
 
-        async function testConnection() {
-            try {
-                await getDocFromServer(doc(db, 'test', 'connection'));
-            } catch (error) {
-                if (error instanceof Error && error.message.includes('the client is offline')) {
-                    console.error("Please check your Firebase configuration.");
-                }
-            }
-        }
+        const FALLBACK_FIREBASE_CONFIG = {
+            projectId: "gen-lang-client-0748074451",
+            appId: "1:245252264956:web:a2dfd6efe5bc8639705879",
+            apiKey: "AIzaSyCA-HTslADQ8HDGtke8atM86g9BEozREVA",
+            authDomain: "gen-lang-client-0748074451.firebaseapp.com",
+            firestoreDatabaseId: "ai-studio-jangaschedule-255d31bf-22a9-42f3-8568-ad9450ef1460",
+            storageBucket: "gen-lang-client-0748074451.firebasestorage.app",
+            messagingSenderId: "245252264956"
+        };
 
         async function initFirebase() {
             try {
-                const res = await fetch('/api/firebase-config');
-                if (!res.ok) throw new Error('Firebase config endpoint error');
-                const firebaseConfig = await res.json();
+                let firebaseConfig = null;
+                try {
+                    const res = await fetch('/api/firebase-config');
+                    if (res.ok) {
+                        firebaseConfig = await res.json();
+                    }
+                } catch (e) {
+                    console.warn('API config fetch failed, using fallback config:', e);
+                }
+
+                if (!firebaseConfig || !firebaseConfig.projectId) {
+                    firebaseConfig = FALLBACK_FIREBASE_CONFIG;
+                }
+
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
                 auth = getAuth(app);
                 isFirestoreReady = true;
 
-                await testConnection();
                 updateDbStatus(true);
                 subscribeToEvents();
                 subscribeToSettings();
@@ -932,12 +945,17 @@
                     });
                 });
 
-                if (items.length > 0 || localStorage.getItem('jangah_db_seeded')) {
+                if (items.length > 0) {
+                    eventList = items;
+                    localStorage.setItem('jangah_2026_events', JSON.stringify(eventList));
+                    renderAllViews();
+                } else if (!snapshot.empty) {
                     eventList = items;
                     localStorage.setItem('jangah_2026_events', JSON.stringify(eventList));
                     renderAllViews();
                 }
             }, (error) => {
+                console.warn('subscribeToEvents error, keeping cached data:', error);
                 handleFirestoreError(error, OperationType.GET, 'events');
             });
         }
@@ -1377,7 +1395,6 @@
 
         window.onload = function() {
             loadDataFromLocal();
-            setupMonthDropdown();
             renderAllViews();
             initFirebase();
             
