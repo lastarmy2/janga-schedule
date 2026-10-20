@@ -46,18 +46,66 @@
     },
     "DepartmentSetting": {
       "title": "DepartmentSetting",
-      "description": "학교 부서 목록 설정",
+      "description": "학교 부서 목록 및 환경설정",
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
-          "description": "부서 목록"
+          "description": "부서 또는 설정 목록"
         },
         "updatedAt": {
           "type": "string",
           "description": "수정 일시"
         }
       }
+    },
+    "Notice": {
+      "title": "Notice",
+      "description": "일일업무 중요 안내 및 전달사항",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "전달사항 고유 식별자"
+        },
+        "author": {
+          "type": "string",
+          "description": "작성자 또는 담당 부서"
+        },
+        "title": {
+          "type": "string",
+          "description": "전달사항 제목"
+        },
+        "startDate": {
+          "type": "string",
+          "description": "게시 시작일 (YYYY-MM-DD)"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "게시 종료일 (YYYY-MM-DD)"
+        },
+        "content": {
+          "type": "string",
+          "description": "전달사항 및 공지 내용"
+        },
+        "password": {
+          "type": "string",
+          "description": "수정/삭제용 숫자 4자리 비밀번호"
+        },
+        "phone": {
+          "type": "string",
+          "description": "비밀번호 찾기용 등록 휴대폰 번호"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "생성 일시"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "수정 일시"
+        }
+      },
+      "required": ["id", "author", "title", "startDate", "endDate", "content"]
     }
   },
   "firestore": {
@@ -68,6 +116,10 @@
     "/settings/{settingId}": {
       "schema": "DepartmentSetting",
       "description": "학교 부서 및 환경설정 컬렉션"
+    },
+    "/notices/{noticeId}": {
+      "schema": "Notice",
+      "description": "일일업무 전체 안내 및 전달사항 컬렉션"
     }
   }
 }
