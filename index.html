@@ -2121,71 +2121,76 @@
 
             let html = `<div class="space-y-2 w-full">`;
 
-            // 1. School Events Section (학교 행사 및 전교 공통)
+            // 1 & 2. Top Row: 2-Column Split: [Left: 학교 행사 및 전교 공통] / [Right: 중요 안내 및 전달사항]
             html += `
-                <div class="bg-emerald-50/80 border border-emerald-200/90 rounded-xl p-2.5 sm:p-3 space-y-1.5">
-                    <div class="flex items-center justify-between border-b border-emerald-200 pb-1">
-                        <h4 class="font-black text-slate-900 text-xs sm:text-[13px] flex items-center gap-1.5">
-                            <span class="text-emerald-700 text-xs leading-none">■</span>
-                            <span>학교 행사 및 전교 공통</span>
-                            <span class="bg-emerald-200/80 text-emerald-900 text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">${sortedSchoolEvents.length}건</span>
-                        </h4>
-                        <button onclick="openModalForTargetAndDate('전교', '${dateStr}')" class="text-xs text-emerald-700 hover:text-emerald-900 font-bold hover:underline flex items-center gap-1">
-                            <i class="fa-solid fa-plus text-[9px]"></i> 전교 일정 추가
-                        </button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3 items-stretch">
+                    <!-- LEFT COLUMN: 학교 행사 및 전교 공통 -->
+                    <div class="bg-emerald-50/80 border border-emerald-200/90 rounded-xl p-2.5 sm:p-3 space-y-1.5 flex flex-col justify-between">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between border-b border-emerald-200 pb-1">
+                                <h4 class="font-black text-slate-900 text-xs sm:text-[13px] flex items-center gap-1.5">
+                                    <span class="text-emerald-700 text-xs leading-none">■</span>
+                                    <span>학교 행사 및 전교 공통</span>
+                                    <span class="bg-emerald-200/80 text-emerald-900 text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">${sortedSchoolEvents.length}건</span>
+                                </h4>
+                                <button onclick="openModalForTargetAndDate('전교', '${dateStr}')" class="text-xs text-emerald-700 hover:text-emerald-900 font-bold hover:underline flex items-center gap-1">
+                                    <i class="fa-solid fa-plus text-[9px]"></i> 전교 일정 추가
+                                </button>
+                            </div>
+                            ${hasSchool 
+                                ? `<div class="divide-y divide-emerald-100">${sortedSchoolEvents.map(it => renderDailyLineItem(it)).join('')}</div>`
+                                : `<div class="py-2.5 text-center text-xs text-emerald-700/60 font-medium">오늘 예정된 학교 행사 및 전교 공통 일정이 없습니다.</div>`
+                            }
+                        </div>
                     </div>
-                    ${hasSchool 
-                        ? `<div class="divide-y divide-emerald-100">${sortedSchoolEvents.map(it => renderDailyLineItem(it)).join('')}</div>`
-                        : `<div class="py-0.5 text-center text-xs text-emerald-700/60 font-medium">오늘 예정된 학교 행사 및 전교 공통 일정이 없습니다.</div>`
-                    }
-                </div>
-            `;
 
-            // 2. 중요 안내 및 전달사항 Section (School Notices - placed below School Events)
-            html += `
-                <div class="bg-amber-50/70 border border-amber-200/90 rounded-xl p-2.5 sm:p-3 space-y-1.5">
-                    <div class="flex items-center justify-between border-b border-amber-200/80 pb-1">
-                        <h4 class="font-black text-slate-900 text-xs sm:text-[13px] flex items-center gap-1.5">
-                            <span class="text-amber-600 text-xs leading-none">■</span>
-                            <span>중요 안내 및 전달사항</span>
-                            <span class="bg-amber-200/90 text-amber-950 text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">${activeNotices.length}건</span>
-                        </h4>
-                        <button onclick="openNoticeModal('${dateStr}')" class="text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-2 py-0.5 rounded-lg transition shadow-2xs flex items-center gap-1">
-                            <i class="fa-solid fa-plus text-[9px]"></i> 전달사항 등록
-                        </button>
+                    <!-- RIGHT COLUMN: 중요 안내 및 전달사항 -->
+                    <div class="bg-amber-50/70 border border-amber-200/90 rounded-xl p-2.5 sm:p-3 space-y-1.5 flex flex-col justify-between">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between border-b border-amber-200/80 pb-1">
+                                <h4 class="font-black text-slate-900 text-xs sm:text-[13px] flex items-center gap-1.5">
+                                    <span class="text-amber-600 text-xs leading-none">■</span>
+                                    <span>중요 안내 및 전달사항</span>
+                                    <span class="bg-amber-200/90 text-amber-950 text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">${activeNotices.length}건</span>
+                                </h4>
+                                <button onclick="openNoticeModal('${dateStr}')" class="text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-2 py-0.5 rounded-lg transition shadow-2xs flex items-center gap-1">
+                                    <i class="fa-solid fa-plus text-[9px]"></i> 전달사항 등록
+                                </button>
+                            </div>
+                            ${hasNotices ? `
+                                <div class="space-y-1">
+                                    ${activeNotices.map(notice => {
+                                        const displayTitle = notice.title || (notice.content ? notice.content.replace(/\r?\n/g, ' ').slice(0, 45) : '전달사항');
+                                        return `
+                                            <div onclick="openNoticeDetailModal('${notice.id}')" class="bg-white rounded-lg px-2.5 py-1.5 border border-amber-200 shadow-2xs hover:border-amber-400 hover:bg-amber-50/50 transition cursor-pointer flex items-center justify-between gap-2 group" title="클릭하여 상세 내용 보기">
+                                                <div class="flex items-center gap-2 min-w-0 flex-1">
+                                                    <span class="inline-flex items-center gap-1 px-1.5 py-0.2 bg-amber-100 text-amber-900 font-bold rounded text-[10px] border border-amber-200 shrink-0">
+                                                        <i class="fa-solid fa-user-pen text-[9px]"></i> ${escapeHtml(notice.author)}
+                                                    </span>
+                                                    <span class="text-xs font-bold text-slate-800 group-hover:text-amber-900 transition truncate leading-tight">
+                                                        ${escapeHtml(displayTitle)}
+                                                    </span>
+                                                </div>
+                                                <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+                                                    <button onclick="event.stopPropagation(); openEditNoticeModal('${notice.id}')" class="text-slate-400 hover:text-amber-800 px-1 py-0.2 rounded hover:bg-amber-100/60 font-semibold text-xs transition flex items-center gap-0.5" title="수정">
+                                                        <i class="fa-solid fa-pen text-[9px]"></i> <span class="hidden sm:inline text-[10px]">수정</span>
+                                                    </button>
+                                                    <button onclick="event.stopPropagation(); confirmDeleteNotice('${notice.id}')" class="text-slate-400 hover:text-rose-600 px-1 py-0.2 rounded hover:bg-rose-50 font-semibold text-xs transition flex items-center gap-0.5" title="삭제">
+                                                        <i class="fa-solid fa-trash-can text-[9px]"></i> <span class="hidden sm:inline text-[10px]">삭제</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : `
+                                <div class="py-2.5 text-center text-xs text-amber-800/70 font-medium flex items-center justify-center gap-2">
+                                    <span>📢 오늘 등록된 중요 안내 및 전달사항이 없습니다.</span>
+                                    <button onclick="openNoticeModal('${dateStr}')" class="text-amber-800 underline font-bold hover:text-amber-950">+ 새 전달사항 등록</button>
+                                </div>
+                            `}
+                        </div>
                     </div>
-                    ${hasNotices ? `
-                        <div class="space-y-1">
-                            ${activeNotices.map(notice => {
-                                const displayTitle = notice.title || (notice.content ? notice.content.replace(/\r?\n/g, ' ').slice(0, 45) : '전달사항');
-                                return `
-                                    <div onclick="openNoticeDetailModal('${notice.id}')" class="bg-white rounded-lg px-2.5 py-1.5 border border-amber-200 shadow-2xs hover:border-amber-400 hover:bg-amber-50/50 transition cursor-pointer flex items-center justify-between gap-2 group" title="클릭하여 상세 내용 보기">
-                                        <div class="flex items-center gap-2 min-w-0 flex-1">
-                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.2 bg-amber-100 text-amber-900 font-bold rounded text-[10px] border border-amber-200 shrink-0">
-                                                <i class="fa-solid fa-user-pen text-[9px]"></i> ${escapeHtml(notice.author)}
-                                            </span>
-                                            <span class="text-xs font-bold text-slate-800 group-hover:text-amber-900 transition truncate leading-tight">
-                                                ${escapeHtml(displayTitle)}
-                                            </span>
-                                        </div>
-                                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
-                                            <button onclick="event.stopPropagation(); openEditNoticeModal('${notice.id}')" class="text-slate-400 hover:text-amber-800 px-1 py-0.2 rounded hover:bg-amber-100/60 font-semibold text-xs transition flex items-center gap-0.5" title="수정">
-                                                <i class="fa-solid fa-pen text-[9px]"></i> <span class="hidden sm:inline text-[10px]">수정</span>
-                                            </button>
-                                            <button onclick="event.stopPropagation(); confirmDeleteNotice('${notice.id}')" class="text-slate-400 hover:text-rose-600 px-1 py-0.2 rounded hover:bg-rose-50 font-semibold text-xs transition flex items-center gap-0.5" title="삭제">
-                                                <i class="fa-solid fa-trash-can text-[9px]"></i> <span class="hidden sm:inline text-[10px]">삭제</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    ` : `
-                        <div class="py-1 text-center text-xs text-amber-800/70 font-medium flex items-center justify-center gap-2">
-                            <span>📢 오늘 등록된 중요 안내 및 전달사항이 없습니다.</span>
-                            <button onclick="openNoticeModal('${dateStr}')" class="text-amber-800 underline font-bold hover:text-amber-950">+ 새 전달사항 등록</button>
-                        </div>
-                    `}
                 </div>
             `;
 
