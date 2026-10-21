@@ -162,14 +162,14 @@
             z-index: 30;
         }
         #weekly-matrix-scroll-box {
-            max-height: calc(100vh - 270px);
-            min-height: 480px;
+            max-height: calc(100vh - 165px);
+            min-height: 400px;
             overflow: auto;
         }
         @media (max-height: 750px) {
             #weekly-matrix-scroll-box {
-                max-height: calc(100vh - 220px);
-                min-height: 380px;
+                max-height: calc(100vh - 125px);
+                min-height: 320px;
             }
         }
         /* Floating Sticky Date Bar on screen scroll */
@@ -200,11 +200,11 @@
 
                     <!-- 2. Center: Navigation Tabs -->
                     <nav class="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
-                        <button id="tab-btn-daily" onclick="switchTab('daily')" class="tab-btn px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
+                        <button id="tab-btn-daily" onclick="switchTab('daily')" class="tab-btn active px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm transition flex items-center gap-1.5 bg-emerald-600 text-white shadow">
                             <i class="fa-solid fa-calendar-day"></i>
                             <span>일일업무</span>
                         </button>
-                        <button id="tab-btn-weekly" onclick="switchTab('weekly')" class="tab-btn active px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm transition flex items-center gap-1.5 bg-emerald-600 text-white shadow">
+                        <button id="tab-btn-weekly" onclick="switchTab('weekly')" class="tab-btn px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition flex items-center gap-1.5">
                             <i class="fa-solid fa-calendar-week"></i>
                             <span>주간업무</span>
                         </button>
@@ -234,35 +234,35 @@
         </header>
 
         <!-- Main Scrollable Container -->
-        <main class="scrollable-content w-full px-3 sm:px-6 lg:px-8 py-6">
+        <main class="scrollable-content w-full px-1.5 sm:px-3 py-1.5 sm:py-2">
 
             <!-- TAB 0: 일일업무 (Daily Work View) -->
-            <section id="tab-daily" class="tab-content hidden space-y-4 w-full">
+            <section id="tab-daily" class="tab-content block space-y-2.5 w-full">
                 
-                <div class="w-full space-y-4">
+                <div class="w-full space-y-2.5">
                     <!-- Daily Detailed Schedule Header & Controls -->
-                    <div class="bg-white p-4 sm:p-5 rounded-xl shadow-sm border border-slate-200 space-y-3.5 w-full">
-                        <div class="flex items-center justify-between gap-4 border-b border-slate-200 pb-3.5">
+                    <div class="bg-white p-2.5 sm:p-3.5 rounded-xl shadow-sm border border-slate-200 space-y-2.5 w-full">
+                        <div class="flex items-center justify-between gap-3 border-b border-slate-200 pb-2.5">
                             <!-- Date Navigator -->
-                            <div class="flex flex-wrap items-center gap-3">
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="changeDailyDate(-1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition" title="이전 날짜">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <div class="flex items-center space-x-1.5">
+                                    <button onclick="changeDailyDate(-1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition" title="이전 날짜">
                                         <i class="fa-solid fa-chevron-left text-xs"></i>
                                     </button>
                                     <div class="text-left">
-                                        <h3 id="daily-date-display" class="font-extrabold text-slate-800 text-lg sm:text-xl flex items-center gap-2">
+                                        <h3 id="daily-date-display" class="font-extrabold text-slate-800 text-base sm:text-lg flex items-center gap-1.5">
                                             2026년 3월 16일 (월요일)
                                         </h3>
                                     </div>
-                                    <button onclick="changeDailyDate(1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition" title="다음 날짜">
+                                    <button onclick="changeDailyDate(1)" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition" title="다음 날짜">
                                         <i class="fa-solid fa-chevron-right text-xs"></i>
                                     </button>
                                 </div>
-                                <div class="flex items-center space-x-1.5">
-                                    <button onclick="resetToTodayDaily()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg font-bold border border-slate-300 transition">
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="resetToTodayDaily()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg font-bold border border-slate-300 transition">
                                         오늘
                                     </button>
-                                    <input type="date" id="daily-date-picker" onchange="onDailyDatePickerChange(this.value)" class="text-xs bg-slate-50 border border-slate-300 text-slate-700 px-2.5 py-1.5 rounded-lg font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
+                                    <input type="date" id="daily-date-picker" onchange="onDailyDatePickerChange(this.value)" class="text-xs bg-slate-50 border border-slate-300 text-slate-700 px-2 py-1 rounded-lg font-semibold focus:ring-2 focus:ring-emerald-500 outline-none">
                                 </div>
                             </div>
                         </div>
@@ -296,62 +296,51 @@
             </section>
 
             <!-- TAB 1: 주간업무 (Weekly Matrix View) -->
-            <section id="tab-weekly" class="tab-content block space-y-6 w-full">
+            <section id="tab-weekly" class="tab-content hidden space-y-2 w-full">
                 
-                <div class="w-full space-y-6">
+                <div class="w-full space-y-2">
                     <!-- Weekly Detailed Schedule Header & Controls -->
-                    <div class="bg-white p-5 sm:p-6 rounded-xl shadow-sm border border-slate-200 space-y-4 w-full">
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-4">
-                            <div class="flex flex-wrap items-center gap-3">
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="changeWeek(-1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
-                                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    <div class="bg-white p-2 sm:p-2.5 rounded-xl shadow-sm border border-slate-200 space-y-1.5 w-full">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 border-b border-slate-200 pb-1.5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="changeWeek(-1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition" title="이전 주">
+                                        <i class="fa-solid fa-chevron-left text-[11px]"></i>
                                     </button>
                                     <div class="text-left">
-                                        <h3 id="weekly-range-display" class="font-extrabold text-slate-800 text-lg sm:text-xl flex items-center gap-2">
+                                        <h3 id="weekly-range-display" class="font-extrabold text-slate-800 text-sm sm:text-base flex items-center gap-1">
                                             2026년 3월 1주차
                                         </h3>
-                                        <p id="weekly-date-span" class="text-xs text-slate-500 font-medium">2026.03.02(월) ~ 2026.03.06(금)</p>
+                                        <p id="weekly-date-span" class="text-[10px] text-slate-500 font-medium leading-none">2026.03.02(월) ~ 2026.03.06(금)</p>
                                     </div>
-                                    <button onclick="changeWeek(1)" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition">
-                                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                                    <button onclick="changeWeek(1)" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition" title="다음 주">
+                                        <i class="fa-solid fa-chevron-right text-[11px]"></i>
                                     </button>
                                 </div>
-                                <button onclick="resetToCurrentWeek()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg font-bold border border-slate-300">
+                                <button onclick="resetToCurrentWeek()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-0.5 rounded-lg font-bold border border-slate-300">
                                     이번 주
                                 </button>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <label id="label-weekly-detail-view" class="inline-flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition" title="제목 아래에 시간, 장소, 담당자 상세정보를 표시합니다">
+                                    <input type="checkbox" id="weekly-detail-view" onchange="toggleWeeklyDetailView(this.checked)" class="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                                    <span>자세히 보기</span>
+                                </label>
+                                <label id="label-hide-empty-rows" class="inline-flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition" title="일정이 등록된 부서·학년 행만 모아서 봅니다">
+                                    <input type="checkbox" id="weekly-hide-empty-rows" onchange="renderWeeklyMatrixTable(); updateFilterButtonsUI();" class="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                                    <span>일정 있는 행만 모아보기</span>
+                                </label>
                             </div>
                         </div>
 
                         <!-- Weekly View Mode 1 (DEFAULT): School Weekly Matrix Table (왼쪽 부서·학년 x 가로 월~금 날짜) -->
-                        <div id="weekly-matrix-wrapper" class="space-y-3 w-full">
-                            <div class="flex flex-wrap items-center justify-between text-xs text-slate-600 px-1 gap-2">
-                                <div class="flex items-center gap-2">
-                                    <span class="inline-flex items-center gap-1.5 font-bold text-slate-700 bg-emerald-50 text-emerald-900 px-2.5 py-1 rounded-lg border border-emerald-200">
-                                        <i class="fa-solid fa-table-cells-large text-emerald-600"></i>
-                                        학교 주간 종합 업무표 (부서·학년별 세로행 / 월~금 날짜별 가로열)
-                                    </span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <label id="label-weekly-single-line" class="inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-400 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-300 shadow-2xs transition" title="주간업무 표의 일정을 깔끔하게 한 줄로 표시합니다">
-                                        <input type="checkbox" id="weekly-single-line" checked onchange="toggleWeeklySingleLine(this.checked)" class="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
-                                        <span>한 줄로 보기</span>
-                                    </label>
-                                    <label id="label-hide-empty-rows" class="inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition" title="일정이 등록된 부서·학년 행만 모아서 봅니다">
-                                        <input type="checkbox" id="weekly-hide-empty-rows" onchange="renderWeeklyMatrixTable(); updateFilterButtonsUI();" class="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
-                                        <span>일정 있는 행만 모아보기</span>
-                                    </label>
-                                    <label id="label-weekly-person" class="inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition" title="주간업무 일정에 담당자(👤) 정보를 표시하거나 숨깁니다">
-                                        <input type="checkbox" id="weekly-show-person" onchange="toggleWeeklyPersonVisibility(this.checked)" class="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
-                                        <span>담당자 보기</span>
-                                    </label>
-                                </div>
-                            </div>
+                        <div id="weekly-matrix-wrapper" class="space-y-2 w-full">
 
                             <!-- Floating Sticky Date Bar: 화면을 아래로 스크롤해도 날짜/요일이 상단에 항상 고정되어 보이도록 하는 플로팅 바 -->
                             <div id="weekly-floating-date-bar" class="sticky top-0 z-35 hidden w-full shadow-md rounded-t-xl overflow-hidden border border-slate-400 bg-[#d9ead3] -mb-px">
                                 <div id="weekly-floating-date-bar-inner" class="overflow-x-hidden w-full">
-                                    <table class="w-full text-left text-xs border-separate border-spacing-0 min-w-[980px]">
+                                    <table class="w-full table-fixed text-left text-xs border-separate border-spacing-0">
                                         <thead>
                                             <tr id="weekly-floating-dates-row" class="bg-[#e2efda] text-slate-800 font-bold text-center text-xs">
                                                 <!-- Dynamic 구분 + 5 date headers rendered by renderWeeklyMatrixTable() -->
@@ -362,7 +351,7 @@
                             </div>
 
                             <div id="weekly-matrix-scroll-box" class="overflow-auto border border-slate-300 rounded-xl shadow-sm bg-white w-full">
-                                <table id="weekly-matrix-table" class="w-full text-left text-xs border-separate border-spacing-0 min-w-[980px]">
+                                <table id="weekly-matrix-table" class="w-full table-fixed text-left text-xs border-separate border-spacing-0">
                                     <thead class="sticky top-0 z-30 shadow-xs">
                                         <tr id="weekly-matrix-dates-row" class="bg-[#e2efda] text-slate-800 font-bold text-center text-xs">
                                             <!-- Dynamic 구분 + 5 date headers rendered by renderWeeklyMatrixTable() -->
@@ -443,15 +432,12 @@
                         </div>
 
                         <!-- View Switcher -->
-                        <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg self-start lg:self-center border border-slate-200">
-                            <button id="view-mode-sheet" onclick="setMonthlyViewMode('sheet')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-white text-emerald-700 shadow-sm flex items-center gap-1.5 transition">
-                                <i class="fa-solid fa-table"></i> Google 시트형 취합표
-                            </button>
-                            <button id="view-mode-calendar" onclick="setMonthlyViewMode('calendar')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
+                        <div class="flex items-center space-x-1.5 bg-slate-100 p-1 rounded-lg self-start lg:self-center border border-slate-200">
+                            <button id="view-mode-calendar" onclick="setMonthlyViewMode('calendar')" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-white text-emerald-700 shadow-sm flex items-center gap-1.5 transition">
                                 <i class="fa-solid fa-calendar-days"></i> 달력형
                             </button>
-                            <button id="view-mode-list" onclick="setMonthlyViewMode('list')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
-                                <i class="fa-solid fa-list-ul"></i> 리스트/일자별
+                            <button id="view-mode-sheet" onclick="setMonthlyViewMode('sheet')" class="px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-table"></i> 시트형 취합표
                             </button>
                         </div>
 
@@ -502,15 +488,15 @@
                 </div>
 
                 <!-- VIEW MODE 1: Google Sheets Style Table -->
-                <div id="monthly-sheet-container" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full">
+                <div id="monthly-sheet-container" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full">
                     <div class="overflow-x-auto w-full">
                         <table class="w-full text-left border-collapse min-w-[900px]">
                             <thead>
                                 <tr class="bg-emerald-800 text-white text-xs font-bold divide-x divide-emerald-700 uppercase tracking-wider">
                                     <th class="py-3 px-3 w-16 text-center">날짜</th>
                                     <th class="py-3 px-2 w-12 text-center">요일</th>
-                                    <th class="py-3 px-4 w-1/2">학년별 행사 / 외부강사수업</th>
                                     <th class="py-3 px-4 w-1/2">부서별 업무 및 협조사항</th>
+                                    <th class="py-3 px-4 w-1/2">학년별 행사 / 외부강사수업</th>
                                     <th class="py-3 px-3 w-20 text-center no-print">작성/관리</th>
                                 </tr>
                             </thead>
@@ -522,7 +508,7 @@
                 </div>
 
                 <!-- VIEW MODE 2: Calendar Grid -->
-                <div id="monthly-calendar-container" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-4 w-full">
+                <div id="monthly-calendar-container" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 w-full">
                     <div class="grid grid-cols-7 gap-px bg-slate-200 rounded-lg overflow-hidden border border-slate-200 text-xs">
                         <div class="bg-rose-50 text-rose-700 font-bold p-2 text-center">일</div>
                         <div class="bg-slate-100 text-slate-700 font-bold p-2 text-center">월</div>
@@ -1342,10 +1328,11 @@
         let currentDate = new Date(); 
         let currentWeeklyDate = new Date(); 
         let currentDailyDate = new Date();
-        let currentTab = 'weekly'; 
-        let monthlyViewMode = 'sheet'; 
+        let currentTab = 'daily'; 
+        let monthlyViewMode = 'calendar'; // 기본값: 달력형
         let weeklySubViewMode = 'table'; 
         let dailySubViewMode = 'cards'; 
+        let showWeeklyDetailView = false; // 기본값: 주간업무 자세히 보기 꺼짐 (제목만 1줄로 표시)
         let showWeeklyPerson = false; // 기본값: 주간업무에서 담당자 숨김 
         let showWeeklySingleLine = true; // 기본값: 주간업무 표의 일정 한 줄로 보기
 
@@ -1793,6 +1780,7 @@
             initFirebase();
             initWeeklyStickyDateBarSync();
             updateFilterButtonsUI();
+            switchTab('daily');
             
             const now = new Date();
             const dateStamp = document.getElementById('print-date-stamp');
@@ -1829,11 +1817,15 @@
 
         function setMonthlyViewMode(mode) {
             monthlyViewMode = mode;
-            document.getElementById('monthly-sheet-container').classList.add('hidden');
-            document.getElementById('monthly-calendar-container').classList.add('hidden');
-            document.getElementById('monthly-list-container').classList.add('hidden');
+            const sheetContainer = document.getElementById('monthly-sheet-container');
+            const calContainer = document.getElementById('monthly-calendar-container');
+            const listContainer = document.getElementById('monthly-list-container');
 
-            ['sheet', 'calendar', 'list'].forEach(m => {
+            if (sheetContainer) sheetContainer.classList.add('hidden');
+            if (calContainer) calContainer.classList.add('hidden');
+            if (listContainer) listContainer.classList.add('hidden');
+
+            ['calendar', 'sheet'].forEach(m => {
                 const btn = document.getElementById(`view-mode-${m}`);
                 if (btn) {
                     btn.className = "px-3 py-1.5 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition";
@@ -1845,9 +1837,8 @@
                 activeBtn.className = "px-3 py-1.5 rounded-md text-xs font-semibold bg-white text-emerald-700 shadow-sm flex items-center gap-1.5 transition";
             }
 
-            if (mode === 'sheet') document.getElementById('monthly-sheet-container').classList.remove('hidden');
-            if (mode === 'calendar') document.getElementById('monthly-calendar-container').classList.remove('hidden');
-            if (mode === 'list') document.getElementById('monthly-list-container').classList.remove('hidden');
+            if (mode === 'calendar' && calContainer) calContainer.classList.remove('hidden');
+            if (mode === 'sheet' && sheetContainer) sheetContainer.classList.remove('hidden');
 
             renderMonthlyView();
         }
@@ -2002,18 +1993,18 @@
             const personText = item.person ? `[담당: ${escapeHtml(item.person)}]` : '';
 
             return `
-                <div onclick="showEventDetailModal('${item.id}')" class="group flex items-center justify-between gap-2 py-1.5 px-2 rounded-lg hover:bg-slate-50 transition cursor-pointer text-xs sm:text-[13px] text-slate-900 border border-transparent hover:border-slate-200">
-                    <div class="flex items-center flex-wrap gap-x-2 gap-y-1 flex-1 min-w-0 leading-snug">
-                        <span class="text-slate-400 font-black select-none text-sm leading-none">•</span>
-                        <span class="font-extrabold text-slate-800 shrink-0 tracking-tight">[${escapeHtml(targetText)}]</span>
+                <div onclick="showEventDetailModal('${item.id}')" class="group flex items-center justify-between gap-1.5 py-0.5 px-1.5 rounded hover:bg-slate-50 transition cursor-pointer text-xs text-slate-900 border border-transparent hover:border-slate-200">
+                    <div class="flex items-center flex-wrap gap-x-1.5 gap-y-0.5 flex-1 min-w-0 leading-tight">
+                        <span class="text-slate-400 font-black select-none text-xs leading-none">•</span>
+                        <span class="font-extrabold text-slate-800 shrink-0 tracking-tight text-[11px] sm:text-xs">[${escapeHtml(targetText)}]</span>
                         <span class="font-bold text-slate-900 break-words">${escapeHtml(item.title)}</span>
-                        ${detailsText ? `<span class="text-slate-600 font-medium break-words">${detailsText}</span>` : ''}
-                        ${personText ? `<span class="text-slate-700 font-semibold shrink-0 bg-slate-100/90 px-1.5 py-0.5 rounded border border-slate-200 text-xs">${personText}</span>` : ''}
+                        ${detailsText ? `<span class="text-blue-700 font-medium break-words">${detailsText}</span>` : ''}
+                        ${personText ? `<span class="text-slate-600 font-medium shrink-0 bg-slate-100 px-1 py-0.2 rounded border border-slate-200 text-[10px]">${personText}</span>` : ''}
                     </div>
-                    <div class="opacity-0 group-hover:opacity-100 transition space-x-1 shrink-0 flex items-center bg-white/95 px-1 py-0.5 rounded-md border border-slate-200 shadow-2xs" onclick="event.stopPropagation()">
-                        <button onclick="event.stopPropagation(); duplicateEvent('${item.id}')" class="text-slate-500 hover:text-emerald-700 p-0.5" title="복사 등록"><i class="fa-regular fa-copy text-xs"></i></button>
-                        <button onclick="event.stopPropagation(); editEvent('${item.id}')" class="text-slate-500 hover:text-blue-600 p-0.5" title="수정"><i class="fa-solid fa-pen text-xs"></i></button>
-                        <button onclick="event.stopPropagation(); deleteEvent('${item.id}')" class="text-slate-400 hover:text-rose-600 p-0.5" title="삭제"><i class="fa-solid fa-xmark text-xs"></i></button>
+                    <div class="opacity-0 group-hover:opacity-100 transition space-x-0.5 shrink-0 flex items-center bg-white/95 px-0.5 py-0 rounded border border-slate-200 shadow-2xs" onclick="event.stopPropagation()">
+                        <button onclick="event.stopPropagation(); duplicateEvent('${item.id}')" class="text-slate-400 hover:text-emerald-700 p-0.5" title="복사 등록"><i class="fa-regular fa-copy text-[10px]"></i></button>
+                        <button onclick="event.stopPropagation(); editEvent('${item.id}')" class="text-slate-400 hover:text-blue-600 p-0.5" title="수정"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                        <button onclick="event.stopPropagation(); deleteEvent('${item.id}')" class="text-slate-400 hover:text-rose-600 p-0.5" title="삭제"><i class="fa-solid fa-xmark text-[10px]"></i></button>
                     </div>
                 </div>
             `;
@@ -2035,10 +2026,7 @@
             // 1. Update Date Header & Input
             const dateDisplayEl = document.getElementById('daily-date-display');
             if (dateDisplayEl) {
-                dateDisplayEl.innerHTML = `
-                    <span>${y}년 ${m}월 ${d}일 (${dayName}요일)</span>
-                    ${isToday ? '<span class="bg-emerald-600 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-2xs">오늘</span>' : ''}
-                `;
+                dateDisplayEl.innerText = `${y}년 ${m}월 ${d}일 (${dayName}요일)`;
             }
             const datePickerEl = document.getElementById('daily-date-picker');
             if (datePickerEl) {
@@ -2131,61 +2119,61 @@
             const activeNotices = getActiveNoticesForDate(dateStr);
             const hasNotices = activeNotices.length > 0;
 
-            let html = `<div class="space-y-3.5 w-full">`;
+            let html = `<div class="space-y-2 w-full">`;
 
             // 1. School Events Section (학교 행사 및 전교 공통)
             html += `
-                <div class="bg-emerald-50/80 border border-emerald-200/90 rounded-xl p-3 sm:p-3.5 space-y-2">
-                    <div class="flex items-center justify-between border-b border-emerald-200 pb-1.5">
-                        <h4 class="font-black text-slate-900 text-xs sm:text-sm flex items-center gap-2">
-                            <span class="text-emerald-700 text-sm leading-none">■</span>
+                <div class="bg-emerald-50/80 border border-emerald-200/90 rounded-xl p-2.5 sm:p-3 space-y-1.5">
+                    <div class="flex items-center justify-between border-b border-emerald-200 pb-1">
+                        <h4 class="font-black text-slate-900 text-xs sm:text-[13px] flex items-center gap-1.5">
+                            <span class="text-emerald-700 text-xs leading-none">■</span>
                             <span>학교 행사 및 전교 공통</span>
-                            <span class="bg-emerald-200/80 text-emerald-900 text-xs px-2 py-0.5 rounded-full font-bold ml-1">${sortedSchoolEvents.length}건</span>
+                            <span class="bg-emerald-200/80 text-emerald-900 text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">${sortedSchoolEvents.length}건</span>
                         </h4>
                         <button onclick="openModalForTargetAndDate('전교', '${dateStr}')" class="text-xs text-emerald-700 hover:text-emerald-900 font-bold hover:underline flex items-center gap-1">
-                            <i class="fa-solid fa-plus text-[10px]"></i> 전교 일정 추가
+                            <i class="fa-solid fa-plus text-[9px]"></i> 전교 일정 추가
                         </button>
                     </div>
                     ${hasSchool 
                         ? `<div class="divide-y divide-emerald-100">${sortedSchoolEvents.map(it => renderDailyLineItem(it)).join('')}</div>`
-                        : `<div class="py-1 text-center text-xs text-emerald-700/60 font-medium">오늘 예정된 학교 행사 및 전교 공통 일정이 없습니다.</div>`
+                        : `<div class="py-0.5 text-center text-xs text-emerald-700/60 font-medium">오늘 예정된 학교 행사 및 전교 공통 일정이 없습니다.</div>`
                     }
                 </div>
             `;
 
             // 2. 중요 안내 및 전달사항 Section (School Notices - placed below School Events)
             html += `
-                <div class="bg-amber-50/70 border border-amber-200/90 rounded-xl p-3 sm:p-3.5 space-y-2.5">
-                    <div class="flex items-center justify-between border-b border-amber-200/80 pb-1.5">
-                        <h4 class="font-black text-slate-900 text-xs sm:text-sm flex items-center gap-2">
-                            <span class="text-amber-600 text-sm leading-none">■</span>
+                <div class="bg-amber-50/70 border border-amber-200/90 rounded-xl p-2.5 sm:p-3 space-y-1.5">
+                    <div class="flex items-center justify-between border-b border-amber-200/80 pb-1">
+                        <h4 class="font-black text-slate-900 text-xs sm:text-[13px] flex items-center gap-1.5">
+                            <span class="text-amber-600 text-xs leading-none">■</span>
                             <span>중요 안내 및 전달사항</span>
-                            <span class="bg-amber-200/90 text-amber-950 text-xs px-2 py-0.5 rounded-full font-bold ml-1">${activeNotices.length}건</span>
+                            <span class="bg-amber-200/90 text-amber-950 text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">${activeNotices.length}건</span>
                         </h4>
-                        <button onclick="openNoticeModal('${dateStr}')" class="text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-2.5 py-1 rounded-lg transition shadow-2xs flex items-center gap-1">
-                            <i class="fa-solid fa-plus text-[10px]"></i> 전달사항 등록
+                        <button onclick="openNoticeModal('${dateStr}')" class="text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-2 py-0.5 rounded-lg transition shadow-2xs flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[9px]"></i> 전달사항 등록
                         </button>
                     </div>
                     ${hasNotices ? `
-                        <div class="space-y-1.5">
+                        <div class="space-y-1">
                             ${activeNotices.map(notice => {
                                 const displayTitle = notice.title || (notice.content ? notice.content.replace(/\r?\n/g, ' ').slice(0, 45) : '전달사항');
                                 return `
-                                    <div onclick="openNoticeDetailModal('${notice.id}')" class="bg-white rounded-lg px-3 py-2 border border-amber-200 shadow-2xs hover:border-amber-400 hover:bg-amber-50/50 transition cursor-pointer flex items-center justify-between gap-3 group" title="클릭하여 상세 내용 보기">
-                                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-900 font-bold rounded text-xs border border-amber-200 shrink-0">
-                                                <i class="fa-solid fa-user-pen text-[10px]"></i> ${escapeHtml(notice.author)}
+                                    <div onclick="openNoticeDetailModal('${notice.id}')" class="bg-white rounded-lg px-2.5 py-1.5 border border-amber-200 shadow-2xs hover:border-amber-400 hover:bg-amber-50/50 transition cursor-pointer flex items-center justify-between gap-2 group" title="클릭하여 상세 내용 보기">
+                                        <div class="flex items-center gap-2 min-w-0 flex-1">
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.2 bg-amber-100 text-amber-900 font-bold rounded text-[10px] border border-amber-200 shrink-0">
+                                                <i class="fa-solid fa-user-pen text-[9px]"></i> ${escapeHtml(notice.author)}
                                             </span>
-                                            <span class="text-xs sm:text-[13px] font-bold text-slate-800 group-hover:text-amber-900 transition truncate leading-snug">
+                                            <span class="text-xs font-bold text-slate-800 group-hover:text-amber-900 transition truncate leading-tight">
                                                 ${escapeHtml(displayTitle)}
                                             </span>
                                         </div>
                                         <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
-                                            <button onclick="event.stopPropagation(); openEditNoticeModal('${notice.id}')" class="text-slate-400 hover:text-amber-800 px-1.5 py-0.5 rounded hover:bg-amber-100/60 font-semibold text-xs transition flex items-center gap-1" title="수정">
-                                                <i class="fa-solid fa-pen text-[10px]"></i> <span class="hidden sm:inline text-[11px]">수정</span>
+                                            <button onclick="event.stopPropagation(); openEditNoticeModal('${notice.id}')" class="text-slate-400 hover:text-amber-800 px-1 py-0.2 rounded hover:bg-amber-100/60 font-semibold text-xs transition flex items-center gap-0.5" title="수정">
+                                                <i class="fa-solid fa-pen text-[9px]"></i> <span class="hidden sm:inline text-[10px]">수정</span>
                                             </button>
-                                            <button onclick="event.stopPropagation(); confirmDeleteNotice('${notice.id}')" class="text-slate-400 hover:text-rose-600 px-1.5 py-0.5 rounded hover:bg-rose-50 font-semibold text-xs transition flex items-center gap-1" title="삭제">
-                                                <i class="fa-solid fa-trash-can text-[10px]"></i> <span class="hidden sm:inline text-[11px]">삭제</span>
+                                            <button onclick="event.stopPropagation(); confirmDeleteNotice('${notice.id}')" class="text-slate-400 hover:text-rose-600 px-1 py-0.2 rounded hover:bg-rose-50 font-semibold text-xs transition flex items-center gap-0.5" title="삭제">
+                                                <i class="fa-solid fa-trash-can text-[9px]"></i> <span class="hidden sm:inline text-[10px]">삭제</span>
                                             </button>
                                         </div>
                                     </div>
@@ -2193,7 +2181,7 @@
                             }).join('')}
                         </div>
                     ` : `
-                        <div class="py-2 text-center text-xs text-amber-800/70 font-medium flex items-center justify-center gap-2">
+                        <div class="py-1 text-center text-xs text-amber-800/70 font-medium flex items-center justify-center gap-2">
                             <span>📢 오늘 등록된 중요 안내 및 전달사항이 없습니다.</span>
                             <button onclick="openNoticeModal('${dateStr}')" class="text-amber-800 underline font-bold hover:text-amber-950">+ 새 전달사항 등록</button>
                         </div>
@@ -2203,43 +2191,43 @@
 
             // 3. Left & Right 2-Column Split: [Left: 학년별 교육활동] / [Right: 부서별 일정]
             html += `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3 items-start">
                     <!-- LEFT COLUMN: 학년별 교육활동 -->
-                    <div class="bg-white rounded-xl p-4 sm:p-4.5 border border-slate-200 shadow-2xs space-y-2.5 flex flex-col">
-                        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-2">
-                            <h4 class="font-black text-slate-900 text-sm sm:text-base flex items-center gap-2">
-                                <span class="text-slate-900 text-base leading-none">■</span>
+                    <div class="bg-white rounded-xl p-2.5 sm:p-3 border border-slate-200 shadow-2xs space-y-2 flex flex-col">
+                        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-1.5">
+                            <h4 class="font-black text-slate-900 text-xs sm:text-sm flex items-center gap-1.5">
+                                <span class="text-slate-900 text-sm leading-none">■</span>
                                 <span>학년별 교육활동</span>
-                                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full font-bold ml-1">${sortedGradeEvents.length}건</span>
+                                <span class="bg-blue-100 text-blue-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">${sortedGradeEvents.length}건</span>
                             </h4>
                             <button onclick="openModalForTargetAndDate('1학년', '${dateStr}')" class="text-xs text-blue-700 hover:text-blue-900 font-bold hover:underline flex items-center gap-1">
-                                <i class="fa-solid fa-plus text-[10px]"></i> 학년 일정 추가
+                                <i class="fa-solid fa-plus text-[9px]"></i> 학년 일정 추가
                             </button>
                         </div>
                         <div class="divide-y divide-slate-100">
                             ${hasGrade 
                                 ? sortedGradeEvents.map(it => renderDailyLineItem(it)).join('') 
-                                : `<div class="py-6 text-center text-xs text-slate-400">오늘 예정된 학년 교육활동이 없습니다.</div>`
+                                : `<div class="py-4 text-center text-xs text-slate-400">오늘 예정된 학년 교육활동이 없습니다.</div>`
                             }
                         </div>
                     </div>
 
                     <!-- RIGHT COLUMN: 부서별 일정 -->
-                    <div class="bg-white rounded-xl p-4 sm:p-4.5 border border-slate-200 shadow-2xs space-y-2.5 flex flex-col">
-                        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-2">
-                            <h4 class="font-black text-slate-900 text-sm sm:text-base flex items-center gap-2">
-                                <span class="text-slate-900 text-base leading-none">■</span>
+                    <div class="bg-white rounded-xl p-2.5 sm:p-3 border border-slate-200 shadow-2xs space-y-2 flex flex-col">
+                        <div class="flex items-center justify-between border-b-2 border-slate-900 pb-1.5">
+                            <h4 class="font-black text-slate-900 text-xs sm:text-sm flex items-center gap-1.5">
+                                <span class="text-slate-900 text-sm leading-none">■</span>
                                 <span>부서별 일정</span>
-                                <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded-full font-bold ml-1">${sortedDeptEvents.length}건</span>
+                                <span class="bg-indigo-100 text-indigo-800 text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">${sortedDeptEvents.length}건</span>
                             </h4>
                             <button onclick="openModalForDeptAndDate('${dateStr}')" class="text-xs text-indigo-700 hover:text-indigo-900 font-bold hover:underline flex items-center gap-1">
-                                <i class="fa-solid fa-plus text-[10px]"></i> 부서 업무 추가
+                                <i class="fa-solid fa-plus text-[9px]"></i> 부서 업무 추가
                             </button>
                         </div>
                         <div class="divide-y divide-slate-100">
                             ${hasDept 
                                 ? sortedDeptEvents.map(it => renderDailyLineItem(it)).join('') 
-                                : `<div class="py-6 text-center text-xs text-slate-400">오늘 예정된 부서 일정이 없습니다.</div>`
+                                : `<div class="py-4 text-center text-xs text-slate-400">오늘 예정된 부서 일정이 없습니다.</div>`
                             }
                         </div>
                     </div>
@@ -2649,22 +2637,19 @@
                 const isLast = idx === 4;
                 const borderR = isLast ? '' : 'border-r';
                 return `
-                    <th class="py-2 px-2 w-[18%] text-center font-bold sticky top-0 z-30 border-b-2 border-slate-400 ${borderR} border-slate-300 ${d.isToday ? 'bg-emerald-200 text-emerald-950 font-black' : 'bg-[#e2efda] text-slate-800'}">
-                        <div class="flex flex-col items-center justify-center py-0.5">
-                            <span class="text-xs ${d.isToday ? 'text-emerald-900 font-black' : 'text-slate-600 font-bold'}">${d.dayName}요일</span>
-                            <div class="flex items-center justify-center gap-1 mt-0.5">
-                                <span class="text-sm font-black ${d.isToday ? 'text-emerald-950' : 'text-slate-900'}">${d.dateDisplay}</span>
-                                ${d.isToday ? '<span class="bg-emerald-600 text-white text-[9px] px-1.5 py-0.2 rounded font-bold shadow-2xs">오늘</span>' : ''}
-                            </div>
+                    <th class="py-0.5 px-0.5 text-center font-bold sticky top-0 z-30 border-b border-slate-400 ${borderR} border-slate-300 ${d.isToday ? 'bg-emerald-200 text-emerald-950 font-black' : 'bg-[#e2efda] text-slate-800'}">
+                        <div class="flex items-center justify-center gap-1 py-0.5 leading-none">
+                            <span class="text-[10px] sm:text-[10.5px] ${d.isToday ? 'text-emerald-900 font-black' : 'text-slate-600 font-bold'}">${d.dayName}</span>
+                            <span class="text-[10.5px] sm:text-[11px] font-black ${d.isToday ? 'text-emerald-950' : 'text-slate-900'}">${d.dateDisplay}</span>
                         </div>
                     </th>
                 `;
             }).join('');
 
             datesRow.innerHTML = `
-                <th class="py-2.5 px-3 w-28 sm:w-32 min-w-[110px] bg-[#d9ead3] align-middle text-sm text-slate-900 font-black border-r border-b-2 border-slate-400 sticky top-0 left-0 z-40 select-none shadow-2xs">
-                    <span class="flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-layer-group text-emerald-700 text-xs"></i>
+                <th class="py-0.5 px-0.5 w-[50px] sm:w-[56px] bg-[#d9ead3] align-middle text-[10px] sm:text-[10.5px] text-slate-900 font-black border-r border-b border-slate-400 sticky top-0 left-0 z-40 select-none shadow-2xs">
+                    <span class="flex items-center justify-center gap-0.5">
+                        <i class="fa-solid fa-layer-group text-emerald-700 text-[8px]"></i>
                         <span>구분</span>
                     </span>
                 </th>
@@ -2675,14 +2660,14 @@
             const floatingDatesRow = document.getElementById('weekly-floating-dates-row');
             if (floatingDatesRow) {
                 floatingDatesRow.innerHTML = `
-                    <th class="py-2.5 px-3 w-28 sm:w-32 min-w-[110px] bg-[#d9ead3] align-middle text-sm text-slate-900 font-black border-r border-b-2 border-slate-400 select-none shadow-2xs">
-                        <div class="flex items-center justify-between">
-                            <span class="flex items-center gap-1">
-                                <i class="fa-solid fa-layer-group text-emerald-700 text-xs"></i>
+                    <th class="py-0.5 px-0.5 w-[50px] sm:w-[56px] bg-[#d9ead3] align-middle text-[10px] sm:text-[10.5px] text-slate-900 font-black border-r border-b border-slate-400 select-none shadow-2xs">
+                        <div class="flex items-center justify-between px-0.5">
+                            <span class="flex items-center gap-0.5">
+                                <i class="fa-solid fa-layer-group text-emerald-700 text-[8px]"></i>
                                 <span>구분</span>
                             </span>
-                            <button onclick="scrollToWeeklyTop()" class="text-[10px] text-emerald-800 hover:text-emerald-950 font-bold hover:underline flex items-center gap-0.5 bg-emerald-100/90 px-1 py-0.5 rounded shadow-2xs" title="표 맨 위로 이동">
-                                <i class="fa-solid fa-arrow-up text-[9px]"></i> 맨위
+                            <button onclick="scrollToWeeklyTop()" class="text-[8px] text-emerald-800 hover:text-emerald-950 font-bold hover:underline flex items-center gap-0.5 bg-emerald-100/90 px-0.5 py-0 rounded shadow-2xs" title="표 맨 위로 이동">
+                                <i class="fa-solid fa-arrow-up text-[7px]"></i>
                             </button>
                         </div>
                     </th>
@@ -2726,8 +2711,8 @@
             function renderCellEventsHtml(items, target, dateStr) {
                 if (!items || items.length === 0) {
                     return `
-                        <button onclick="openModalForTargetAndDate('${escapeHtml(target)}', '${dateStr}')" class="w-full h-full min-h-[34px] opacity-0 group-hover/cell:opacity-100 transition flex items-center justify-center text-slate-300 hover:text-emerald-700 hover:bg-emerald-50/50 rounded text-xs gap-1 font-bold" title="${escapeHtml(target)} ${dateStr} 등록">
-                            <i class="fa-solid fa-plus text-[10px]"></i>
+                        <button onclick="openModalForTargetAndDate('${escapeHtml(target)}', '${dateStr}')" class="w-full h-full min-h-[16px] py-0 opacity-0 group-hover/cell:opacity-100 transition flex items-center justify-center text-slate-300 hover:text-emerald-700 hover:bg-emerald-50/50 rounded text-[9px] gap-0.5 font-bold" title="${escapeHtml(target)} ${dateStr} 등록">
+                            <i class="fa-solid fa-plus text-[8px]"></i>
                         </button>
                     `;
                 }
@@ -2735,50 +2720,52 @@
                 const eventsHtml = items.map(item => {
                     const tooltipText = `${item.title}${item.details ? ' - ' + item.details : ''}${item.person ? ' (담당: ' + item.person + ')' : ''}`;
 
-                    // Single-line detail formatting (parenthesized, compact)
-                    let detailsPart = '';
-                    if (item.details && item.details.trim()) {
-                        const cleanDet = item.details.trim().replace(/\r?\n+/g, ', ');
-                        const wrapped = cleanDet.startsWith('(') && cleanDet.endsWith(')') ? cleanDet : `(${cleanDet})`;
-                        detailsPart = `<span class="text-blue-700 font-medium text-[11px] ml-1 shrink-0 ${showWeeklySingleLine ? 'truncate max-w-[50%]' : ''}">${escapeHtml(wrapped)}</span>`;
-                    }
-
-                    // Person badge
-                    let personPart = '';
-                    if (showWeeklyPerson && item.person && item.person.trim()) {
-                        personPart = `<span class="text-slate-500 font-medium text-[10px] ml-1 shrink-0 bg-slate-100/90 px-1 py-0.2 rounded border border-slate-200">👤${escapeHtml(item.person.trim())}</span>`;
-                    }
-
-                    if (showWeeklySingleLine) {
+                    if (!showWeeklyDetailView) {
+                        // 1. 자세히 보기 비활성화 (기본): 제목만 1줄로 초슬림 표시
                         return `
-                            <div onclick="showEventDetailModal('${item.id}')" class="group/item relative flex items-center justify-between gap-1 py-1 px-1.5 rounded-md hover:bg-emerald-50/80 transition cursor-pointer text-xs mb-0.5 last:mb-0 border border-transparent hover:border-emerald-200" title="${escapeHtml(tooltipText)}">
+                            <div onclick="showEventDetailModal('${item.id}')" class="group/item relative flex items-center justify-between gap-0.5 py-0 px-0.5 rounded hover:bg-emerald-50/80 transition cursor-pointer text-[10px] sm:text-[10.5px] mb-0.5 last:mb-0 border border-transparent hover:border-emerald-200" title="${escapeHtml(tooltipText)}">
                                 <div class="flex items-center min-w-0 flex-1 truncate leading-tight">
-                                    <span class="text-blue-700 font-black shrink-0 mr-1 text-[11px] select-none">•</span>
-                                    <span class="font-bold text-slate-900 group-hover/item:text-emerald-900 transition truncate">${escapeHtml(item.title)}</span>
-                                    ${detailsPart}
-                                    ${personPart}
+                                    <span class="text-blue-700 font-black shrink-0 mr-0.5 text-[8px] select-none leading-none">•</span>
+                                    <span class="font-bold text-slate-900 group-hover/item:text-emerald-900 transition truncate leading-tight">${escapeHtml(item.title)}</span>
                                 </div>
-                                <div class="shrink-0 opacity-0 group-hover/item:opacity-100 transition flex items-center space-x-0.5 bg-white/95 px-1 py-0.5 rounded border border-slate-200 shadow-2xs z-10" onclick="event.stopPropagation()">
-                                    <button onclick="event.stopPropagation(); duplicateEvent('${item.id}')" class="text-slate-400 hover:text-emerald-700 p-0.5" title="복사"><i class="fa-regular fa-copy text-[10px]"></i></button>
-                                    <button onclick="event.stopPropagation(); editEvent('${item.id}')" class="text-slate-400 hover:text-blue-600 p-0.5" title="수정"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                    <button onclick="event.stopPropagation(); deleteEvent('${item.id}')" class="text-slate-400 hover:text-rose-600 p-0.5" title="삭제"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+                                <div class="shrink-0 opacity-0 group-hover/item:opacity-100 transition flex items-center space-x-0.5 bg-white/95 px-0.5 py-0 rounded border border-slate-200 shadow-2xs z-10" onclick="event.stopPropagation()">
+                                    <button onclick="event.stopPropagation(); duplicateEvent('${item.id}')" class="text-slate-400 hover:text-emerald-700 p-0 text-[8px]" title="복사"><i class="fa-regular fa-copy"></i></button>
+                                    <button onclick="event.stopPropagation(); editEvent('${item.id}')" class="text-slate-400 hover:text-blue-600 p-0 text-[8px]" title="수정"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="event.stopPropagation(); deleteEvent('${item.id}')" class="text-slate-400 hover:text-rose-600 p-0 text-[8px]" title="삭제"><i class="fa-solid fa-xmark"></i></button>
                                 </div>
                             </div>
                         `;
                     } else {
+                        // 2. 자세히 보기 활성화: 제목 아랫줄에 시간, 장소, 담당자가 1줄로 슬림하게 표시
+                        let subParts = [];
+                        if (item.details && item.details.trim()) {
+                            const cleanDet = item.details.trim().replace(/\r?\n+/g, ', ');
+                            subParts.push(`<span class="text-blue-700 font-medium truncate">${escapeHtml(cleanDet)}</span>`);
+                        }
+                        if (item.person && item.person.trim()) {
+                            subParts.push(`<span class="text-slate-500 font-normal shrink-0 bg-slate-100/90 px-0.5 rounded border border-slate-200">👤${escapeHtml(item.person.trim())}</span>`);
+                        }
+
+                        const subLineHtml = subParts.length > 0 ? `
+                            <div class="flex items-center gap-1 pl-1.5 mt-0 text-[9px] leading-tight text-slate-600 min-w-0 truncate">
+                                ${subParts.join('<span class="text-slate-300 select-none">|</span>')}
+                            </div>
+                        ` : '';
+
                         return `
-                            <div onclick="showEventDetailModal('${item.id}')" class="group/item relative flex items-start justify-between gap-1 py-1 px-1.5 rounded-md hover:bg-emerald-50/80 transition cursor-pointer text-xs mb-1 last:mb-0 border border-transparent hover:border-emerald-200" title="${escapeHtml(tooltipText)}">
-                                <div class="flex-1 min-w-0 leading-snug break-words">
-                                    <span class="text-blue-700 font-black shrink-0 mr-1 text-[11px] select-none">•</span>
-                                    <span class="font-bold text-slate-900 group-hover/item:text-emerald-900 transition">${escapeHtml(item.title)}</span>
-                                    ${detailsPart}
-                                    ${personPart}
+                            <div onclick="showEventDetailModal('${item.id}')" class="group/item relative flex flex-col justify-center py-0 px-0.5 rounded hover:bg-emerald-50/80 transition cursor-pointer text-[10px] sm:text-[10.5px] mb-0.5 last:mb-0 border border-transparent hover:border-emerald-200" title="${escapeHtml(tooltipText)}">
+                                <div class="flex items-center justify-between gap-0.5 w-full min-w-0 leading-tight">
+                                    <div class="flex items-center min-w-0 flex-1 truncate leading-tight">
+                                        <span class="text-blue-700 font-black shrink-0 mr-0.5 text-[8px] select-none leading-none">•</span>
+                                        <span class="font-bold text-slate-900 group-hover/item:text-emerald-900 transition truncate leading-tight">${escapeHtml(item.title)}</span>
+                                    </div>
+                                    <div class="shrink-0 opacity-0 group-hover/item:opacity-100 transition flex items-center space-x-0.5 bg-white/95 px-0.5 py-0 rounded border border-slate-200 shadow-2xs z-10" onclick="event.stopPropagation()">
+                                        <button onclick="event.stopPropagation(); duplicateEvent('${item.id}')" class="text-slate-400 hover:text-emerald-700 p-0 text-[8px]" title="복사"><i class="fa-regular fa-copy"></i></button>
+                                        <button onclick="event.stopPropagation(); editEvent('${item.id}')" class="text-slate-400 hover:text-blue-600 p-0 text-[8px]" title="수정"><i class="fa-solid fa-pen"></i></button>
+                                        <button onclick="event.stopPropagation(); deleteEvent('${item.id}')" class="text-slate-400 hover:text-rose-600 p-0 text-[8px]" title="삭제"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
                                 </div>
-                                <div class="shrink-0 opacity-0 group-hover/item:opacity-100 transition flex items-center space-x-0.5 bg-white/95 px-1 py-0.5 rounded border border-slate-200 shadow-2xs z-10" onclick="event.stopPropagation()">
-                                    <button onclick="event.stopPropagation(); duplicateEvent('${item.id}')" class="text-slate-400 hover:text-emerald-700 p-0.5" title="복사"><i class="fa-regular fa-copy text-[10px]"></i></button>
-                                    <button onclick="event.stopPropagation(); editEvent('${item.id}')" class="text-slate-400 hover:text-blue-600 p-0.5" title="수정"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                                    <button onclick="event.stopPropagation(); deleteEvent('${item.id}')" class="text-slate-400 hover:text-rose-600 p-0.5" title="삭제"><i class="fa-solid fa-xmark text-[10px]"></i></button>
-                                </div>
+                                ${subLineHtml}
                             </div>
                         `;
                     }
@@ -2788,9 +2775,9 @@
                     <div class="flex flex-col justify-between h-full">
                         <div>${eventsHtml}</div>
                         <button onclick="openModalForTargetAndDate('${escapeHtml(target)}', '${dateStr}')" 
-                                class="w-full mt-0.5 py-0.5 opacity-0 group-hover/cell:opacity-100 transition flex items-center justify-center text-slate-400 hover:text-emerald-700 hover:bg-emerald-50/70 rounded text-[10px] gap-1 font-semibold" 
+                                class="w-full mt-0 py-0 opacity-0 group-hover/cell:opacity-100 transition flex items-center justify-center text-slate-400 hover:text-emerald-700 hover:bg-emerald-50/70 rounded h-3 text-[8px] gap-0.5 font-semibold" 
                                 title="${escapeHtml(target)} ${dateStr}에 추가 일정 등록">
-                            <i class="fa-solid fa-plus text-[9px]"></i>
+                            <i class="fa-solid fa-plus text-[7px]"></i>
                         </button>
                     </div>
                 `;
@@ -2808,15 +2795,15 @@
 
                 html += `
                     <tr class="divide-x divide-slate-300 border-b border-slate-300 hover:bg-slate-50/70 transition">
-                        <td class="py-2.5 px-3 text-center bg-[#d9ead3] border-r border-b border-slate-300 align-middle sticky left-0 z-20">
-                            <span class="font-extrabold text-slate-900 text-xs">${escapeHtml(dept)}</span>
+                        <td class="py-0.5 px-0.5 text-center bg-[#d9ead3] border-r border-b border-slate-300 align-middle sticky left-0 z-20">
+                            <span class="font-extrabold text-slate-900 text-[10px] sm:text-[10.5px] tracking-tight block truncate" title="${escapeHtml(dept)}">${escapeHtml(dept)}</span>
                         </td>
                         ${days.map((d, idx) => {
                             const cellItems = rowDayItems[idx];
                             const isLast = idx === 4;
                             const borderR = isLast ? '' : 'border-r';
                             return `
-                                <td class="p-1.5 align-top min-h-[38px] bg-white hover:bg-amber-50/20 transition group/cell relative border-b ${borderR} border-slate-300">
+                                <td class="p-0.5 align-top min-h-[18px] bg-white hover:bg-amber-50/20 transition group/cell relative border-b ${borderR} border-slate-300">
                                     ${renderCellEventsHtml(cellItems, dept, d.dateStr)}
                                 </td>
                             `;
@@ -2836,8 +2823,8 @@
             if (!hideEmpty || anyGradeHasEvents) {
                 html += `
                     <tr class="bg-emerald-100/70 border-y border-emerald-300 text-emerald-950 font-bold">
-                        <td colspan="6" class="py-1.5 px-3 text-left font-black tracking-wide text-xs sticky left-0 z-10 bg-emerald-100 border-b border-emerald-300">
-                            <i class="fa-solid fa-graduation-cap text-emerald-700 mr-1.5"></i> 학년별 교육활동 및 학교 행사
+                        <td colspan="6" class="py-0.5 px-1.5 text-left font-black tracking-wide text-[10px] sticky left-0 z-10 bg-emerald-100 border-b border-emerald-300">
+                            <i class="fa-solid fa-graduation-cap text-emerald-700 mr-1 text-[9px]"></i> 학년별 교육활동 및 학교 행사
                         </td>
                     </tr>
                 `;
@@ -2851,15 +2838,15 @@
 
                 html += `
                     <tr class="divide-x divide-slate-300 border-b border-slate-300 hover:bg-slate-50/70 transition">
-                        <td class="py-2.5 px-3 text-center bg-[#d9ead3] border-r border-b border-slate-300 align-middle sticky left-0 z-20">
-                            <span class="font-extrabold text-slate-900 text-xs">${escapeHtml(grade)}</span>
+                        <td class="py-0.5 px-0.5 text-center bg-[#d9ead3] border-r border-b border-slate-300 align-middle sticky left-0 z-20">
+                            <span class="font-extrabold text-slate-900 text-[10px] sm:text-[10.5px] tracking-tight block truncate" title="${escapeHtml(grade)}">${escapeHtml(grade)}</span>
                         </td>
                         ${days.map((d, idx) => {
                             const cellItems = rowDayItems[idx];
                             const isLast = idx === 4;
                             const borderR = isLast ? '' : 'border-r';
                             return `
-                                <td class="p-1.5 align-top min-h-[38px] bg-white hover:bg-amber-50/20 transition group/cell relative border-b ${borderR} border-slate-300">
+                                <td class="p-0.5 align-top min-h-[18px] bg-white hover:bg-amber-50/20 transition group/cell relative border-b ${borderR} border-slate-300">
                                     ${renderCellEventsHtml(cellItems, grade, d.dateStr)}
                                 </td>
                             `;
@@ -2871,38 +2858,26 @@
             tbody.innerHTML = html;
         }
 
-        function toggleWeeklySingleLine(forcedVal = null) {
+        function toggleWeeklyDetailView(forcedVal = null) {
             if (forcedVal !== null && typeof forcedVal === 'boolean') {
-                showWeeklySingleLine = forcedVal;
+                showWeeklyDetailView = forcedVal;
             } else {
-                showWeeklySingleLine = !showWeeklySingleLine;
+                showWeeklyDetailView = !showWeeklyDetailView;
             }
             updateFilterButtonsUI();
             renderWeeklyMatrixTable();
-            showToast(showWeeklySingleLine ? '주간 일정이 한 줄로 표시됩니다.' : '주간 일정의 전체 텍스트가 표시됩니다.');
-        }
-
-        function toggleWeeklyPersonVisibility(forcedVal = null) {
-            if (forcedVal !== null && typeof forcedVal === 'boolean') {
-                showWeeklyPerson = forcedVal;
-            } else {
-                showWeeklyPerson = !showWeeklyPerson;
-            }
-            updateFilterButtonsUI();
-            renderWeeklyMatrixTable();
-            renderWeeklyCardsGrid();
-            showToast(showWeeklyPerson ? '주간 일정에 담당자가 표시됩니다.' : '주간 일정에서 담당자가 숨겨졌습니다.');
+            showToast(showWeeklyDetailView ? '시간·장소·담당자 상세정보가 표시됩니다.' : '제목만 1줄로 표시됩니다.');
         }
 
         function updateFilterButtonsUI() {
-            const singleLineCheck = document.getElementById('weekly-single-line');
-            const singleLineLabel = document.getElementById('label-weekly-single-line');
-            if (singleLineCheck && singleLineLabel) {
-                singleLineCheck.checked = showWeeklySingleLine;
-                if (showWeeklySingleLine) {
-                    singleLineLabel.className = "inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-400 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-300 shadow-2xs transition";
+            const detailCheck = document.getElementById('weekly-detail-view');
+            const detailLabel = document.getElementById('label-weekly-detail-view');
+            if (detailCheck && detailLabel) {
+                detailCheck.checked = showWeeklyDetailView;
+                if (showWeeklyDetailView) {
+                    detailLabel.className = "inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-400 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-300 shadow-2xs transition";
                 } else {
-                    singleLineLabel.className = "inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition";
+                    detailLabel.className = "inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition";
                 }
             }
 
@@ -2913,17 +2888,6 @@
                     emptyLabel.className = "inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-400 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-300 shadow-2xs transition";
                 } else {
                     emptyLabel.className = "inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition";
-                }
-            }
-
-            const personCheck = document.getElementById('weekly-show-person');
-            const personLabel = document.getElementById('label-weekly-person');
-            if (personCheck && personLabel) {
-                personCheck.checked = showWeeklyPerson;
-                if (showWeeklyPerson) {
-                    personLabel.className = "inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-emerald-400 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-300 shadow-2xs transition";
-                } else {
-                    personLabel.className = "inline-flex items-center gap-2 cursor-pointer select-none text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 shadow-2xs transition";
                 }
             }
         }
@@ -3067,6 +3031,75 @@
             }
         }
 
+        function isGradeOrSchoolTarget(target) {
+            if (!target) return false;
+            const str = String(target).trim();
+            if (str === '전교' || str === '학교' || str === '공통') return true;
+            if (str.includes('학년')) return true;
+            if (str === '특수' || str === '유치원' || str === '특수학급' || str === '특수/유치원' || str === '특수교육부') return true;
+            return false;
+        }
+
+        function sortMonthlyEvents(events) {
+            if (!events || events.length <= 1) return events ? [...events] : [];
+
+            const depts = (typeof departmentList !== 'undefined' && departmentList && departmentList.length > 0)
+                ? departmentList
+                : (typeof DEFAULT_DEPARTMENTS !== 'undefined' ? DEFAULT_DEPARTMENTS : []);
+
+            const gradeOrderMap = {
+                '전교': 0, '학교': 0, '공통': 0,
+                '1학년': 1, '2학년': 2, '3학년': 3, '4학년': 4,
+                '5학년': 5, '6학년': 6, '특수': 7, '특수학급': 7, '특수교육부': 7, '유치원': 8
+            };
+
+            function getDeptIndex(target) {
+                if (!target) return 999;
+                const str = String(target).trim();
+                const idx = depts.findIndex(d => {
+                    if (typeof matchesTarget === 'function') return matchesTarget(str, d);
+                    return str === d;
+                });
+                return idx >= 0 ? idx : 900;
+            }
+
+            function getGradeIndex(target) {
+                if (!target) return 99;
+                const str = String(target).trim();
+                for (let k in gradeOrderMap) {
+                    if (str.includes(k)) return gradeOrderMap[k];
+                }
+                return 90;
+            }
+
+            return [...events].sort((a, b) => {
+                const aIsGrade = isGradeOrSchoolTarget(a.target);
+                const bIsGrade = isGradeOrSchoolTarget(b.target);
+
+                // 1. 업무일정 먼저 (위), 학년일정 밑에 (아래)
+                if (!aIsGrade && bIsGrade) return -1;
+                if (aIsGrade && !bIsGrade) return 1;
+
+                // 2. 둘 다 업무일정인 경우: 같은 부서끼리 떨어지지 않고 붙여서 정렬
+                if (!aIsGrade && !bIsGrade) {
+                    const orderA = getDeptIndex(a.target);
+                    const orderB = getDeptIndex(b.target);
+                    if (orderA !== orderB) return orderA - orderB;
+                    const targetDiff = String(a.target || '').localeCompare(String(b.target || ''));
+                    if (targetDiff !== 0) return targetDiff;
+                    return String(a.title || '').localeCompare(String(b.title || ''));
+                }
+
+                // 3. 둘 다 학년일정인 경우: 같은 학년끼리 떨어지지 않고 붙여서 정렬
+                const gOrderA = getGradeIndex(a.target);
+                const gOrderB = getGradeIndex(b.target);
+                if (gOrderA !== gOrderB) return gOrderA - gOrderB;
+                const targetDiff = String(a.target || '').localeCompare(String(b.target || ''));
+                if (targetDiff !== 0) return targetDiff;
+                return String(a.title || '').localeCompare(String(b.title || ''));
+            });
+        }
+
         function renderMonthlyView() {
             const year = currentDate.getFullYear();
             const month = currentDate.getMonth() + 1;
@@ -3118,8 +3151,8 @@
 
                 const dayItems = filtered.filter(item => item.date === dateString);
 
-                const gradeItems = dayItems.filter(i => i.target === '전교' || i.target.includes('학년') || i.target === '특수' || i.target === '유치원' || i.target === '특수/유치원');
-                const deptItems = dayItems.filter(i => !gradeItems.includes(i));
+                const deptItems = sortMonthlyEvents(dayItems.filter(i => !isGradeOrSchoolTarget(i.target)));
+                const gradeItems = sortMonthlyEvents(dayItems.filter(i => isGradeOrSchoolTarget(i.target)));
 
                 const tr = document.createElement('tr');
                 tr.className = `hover:bg-amber-50/50 transition ${isWeekend ? 'bg-slate-50/80' : 'bg-white'}`;
@@ -3131,11 +3164,11 @@
                     <td class="py-2.5 px-2 text-center border-r border-slate-200 ${dayColorClass}">${dayName}</td>
                     
                     <td class="py-2 px-3 border-r border-slate-200 vertical-top">
-                        ${renderCellBadges(gradeItems)}
+                        ${renderCellBadges(deptItems)}
                     </td>
 
                     <td class="py-2 px-3 border-r border-slate-200 vertical-top">
-                        ${renderCellBadges(deptItems)}
+                        ${renderCellBadges(gradeItems)}
                     </td>
 
                     <td class="py-2 px-2 text-center border-slate-200 no-print">
@@ -3192,6 +3225,7 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const dayEvents = monthEvents.filter(e => e.date === dateStr);
+                const sortedDayEvents = sortMonthlyEvents(dayEvents);
                 const dayOfWeek = new Date(year, month - 1, day).getDay();
 
                 const cell = document.createElement('div');
@@ -3205,7 +3239,7 @@
                 else if (dayOfWeek === 6) dayNumClass += " text-blue-600";
                 else dayNumClass += " text-slate-700";
 
-                let eventsHtml = dayEvents.map(e => {
+                let eventsHtml = sortedDayEvents.map(e => {
                     const badge = getTargetBadge(e.target, true);
                     return `
                         <div onclick="event.stopPropagation(); showEventDetailModal('${e.id}')" 
@@ -3233,6 +3267,7 @@
 
         function renderListView(filteredEvents) {
             const listBody = document.getElementById('monthly-list-body');
+            if (!listBody) return;
             listBody.innerHTML = '';
 
             if (filteredEvents.length === 0) {
@@ -4204,8 +4239,7 @@
         window.openModalForDeptAndDate = openModalForDeptAndDate;
         window.scrollToWeeklyTop = scrollToWeeklyTop;
         window.updateWeeklyStickyDateBar = updateWeeklyStickyDateBar;
-        window.toggleWeeklyPersonVisibility = toggleWeeklyPersonVisibility;
-        window.toggleWeeklySingleLine = toggleWeeklySingleLine;
+        window.toggleWeeklyDetailView = toggleWeeklyDetailView;
         function getActiveNoticesForDate(targetDateStr) {
             if (!Array.isArray(noticeList)) return [];
             return noticeList.filter(n => {
