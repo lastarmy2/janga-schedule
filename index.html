@@ -2014,6 +2014,38 @@
             return renderDailyLineItem(item);
         }
 
+        function renderDailySchoolEventItem(item) {
+            const targetText = item.target || '전교';
+            const detailsText = item.details ? `(${escapeHtml(item.details)})` : '';
+            const personText = item.person ? `[담당: ${escapeHtml(item.person)}]` : '';
+
+            return `
+                <div onclick="showEventDetailModal('${item.id}')" class="bg-white rounded-lg px-2.5 py-1.5 border border-emerald-200 shadow-2xs hover:border-emerald-400 hover:bg-emerald-50/80 transition cursor-pointer flex items-center justify-between gap-2 group" title="클릭하여 상세 내용 보기">
+                    <div class="flex items-center gap-1.5 min-w-0 flex-1 flex-wrap leading-tight">
+                        <span class="inline-flex items-center gap-1 px-1.5 py-0.2 bg-emerald-100 text-emerald-900 font-bold rounded text-[10px] border border-emerald-200 shrink-0">
+                            [${escapeHtml(targetText)}]
+                        </span>
+                        <span class="text-xs font-bold text-slate-800 group-hover:text-emerald-950 transition break-words">
+                            ${escapeHtml(item.title)}
+                        </span>
+                        ${detailsText ? `<span class="text-emerald-700 text-xs font-medium break-words">${detailsText}</span>` : ''}
+                        ${personText ? `<span class="text-slate-600 font-medium shrink-0 bg-slate-100 px-1 py-0.2 rounded border border-slate-200 text-[10px]">${personText}</span>` : ''}
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+                        <button onclick="event.stopPropagation(); duplicateEvent('${item.id}')" class="text-slate-400 hover:text-emerald-700 px-1 py-0.2 rounded hover:bg-emerald-100/60 font-semibold text-xs transition flex items-center gap-0.5" title="복사 등록">
+                            <i class="fa-regular fa-copy text-[10px]"></i> <span class="hidden sm:inline text-[10px]">복사</span>
+                        </button>
+                        <button onclick="event.stopPropagation(); editEvent('${item.id}')" class="text-slate-400 hover:text-blue-600 px-1 py-0.2 rounded hover:bg-blue-50 font-semibold text-xs transition flex items-center gap-0.5" title="수정">
+                            <i class="fa-solid fa-pen text-[9px]"></i> <span class="hidden sm:inline text-[10px]">수정</span>
+                        </button>
+                        <button onclick="event.stopPropagation(); deleteEvent('${item.id}')" class="text-slate-400 hover:text-rose-600 px-1 py-0.2 rounded hover:bg-rose-50 font-semibold text-xs transition flex items-center gap-0.5" title="삭제">
+                            <i class="fa-solid fa-trash-can text-[9px]"></i> <span class="hidden sm:inline text-[10px]">삭제</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderDailyView() {
             const dateStr = getDailyDateString();
             const y = currentDailyDate.getFullYear();
@@ -2133,13 +2165,16 @@
                                     <span>학교 행사 및 전교 공통</span>
                                     <span class="bg-emerald-200/80 text-emerald-900 text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1">${sortedSchoolEvents.length}건</span>
                                 </h4>
-                                <button onclick="openModalForTargetAndDate('전교', '${dateStr}')" class="text-xs text-emerald-700 hover:text-emerald-900 font-bold hover:underline flex items-center gap-1">
+                                <button onclick="openModalForTargetAndDate('전교', '${dateStr}')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-0.5 rounded-lg transition shadow-2xs flex items-center gap-1">
                                     <i class="fa-solid fa-plus text-[9px]"></i> 전교 일정 추가
                                 </button>
                             </div>
                             ${hasSchool 
-                                ? `<div class="divide-y divide-emerald-100">${sortedSchoolEvents.map(it => renderDailyLineItem(it)).join('')}</div>`
-                                : `<div class="py-2.5 text-center text-xs text-emerald-700/60 font-medium">오늘 예정된 학교 행사 및 전교 공통 일정이 없습니다.</div>`
+                                ? `<div class="space-y-1">${sortedSchoolEvents.map(it => renderDailySchoolEventItem(it)).join('')}</div>`
+                                : `<div class="py-2.5 text-center text-xs text-emerald-800/70 font-medium flex items-center justify-center gap-2">
+                                    <span>🏫 오늘 예정된 학교 행사 및 전교 공통 일정이 없습니다.</span>
+                                    <button onclick="openModalForTargetAndDate('전교', '${dateStr}')" class="text-emerald-800 underline font-bold hover:text-emerald-950">+ 전교 일정 등록</button>
+                                </div>`
                             }
                         </div>
                     </div>
@@ -4194,6 +4229,7 @@
         window.openModalForDailyDate = openModalForDailyDate;
         window.renderDailyView = renderDailyView;
         window.renderDailyLineItem = renderDailyLineItem;
+        window.renderDailySchoolEventItem = renderDailySchoolEventItem;
         window.renderDailyCardsView = renderDailyCardsView;
         window.copyDailyBriefingToClipboard = copyDailyBriefingToClipboard;
         window.printDailyBriefing = printDailyBriefing;
